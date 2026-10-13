@@ -11,12 +11,10 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%230B0B0C'/%3E%3Cpath d='M22 58 A28 28 0 0 1 78 58 Z' fill='%23FF5A1F'/%3E%3Cellipse cx='56' cy='66' rx='34' ry='5' fill='%23FFB15C' opacity='0.55'/%3E%3Crect x='12' y='57.5' width='76' height='1.5' fill='%23F1E9DC'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="fonts/apus-display-shift.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/apus-display.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap">
 <style>
 /* APUS Display: modified from Anybody (SIL OFL 1.1), see fonts/OFL.txt */
-@font-face { font-family: "APUS Display Shift"; src: url(fonts/apus-display-shift.woff2) format("woff2"); font-weight: 800; font-display: swap; }
 @font-face { font-family: "APUS Display"; src: url(fonts/apus-display.woff2) format("woff2"); font-weight: 800; font-display: swap; }
 :root {
   --ink: #0B0B0C;
@@ -48,21 +46,21 @@ main { min-height: 100svh; display: flex; flex-direction: column; position: rela
   text-align: center;
 }
 .wordmark { width: 132px; height: auto; display: block; position: relative; z-index: 2; animation: soft 1.4s ease .1s both; }
-.copy { position: relative; z-index: 2; max-width: 560px; margin: 28px auto 26px; will-change: transform, opacity; }
+.copy { position: relative; z-index: 2; align-self: stretch; text-align: left; margin: 30px 0 0; will-change: transform, opacity; }
 h1 {
-  font-family: 'APUS Display Shift', 'APUS Display', sans-serif;
+  font-family: 'APUS Display', sans-serif;
   font-weight: 800; font-style: normal;
-  font-size: clamp(40px, 11.4vw, 84px);
-  letter-spacing: -0.03em; line-height: 0.95;
+  font-size: clamp(64px, 19.5vw, 168px);
+  letter-spacing: -0.035em; line-height: 0.86;
   margin: 0;
-  text-wrap: balance;
 }
 .lede {
   font-size: clamp(15px, 3.9vw, 17.5px); line-height: 1.6;
-  color: #D9D1C3; margin: 18px auto 0; max-width: 440px;
+  color: #D9D1C3; margin: 22px 0 0; max-width: 300px;
   text-wrap: pretty;
 }
-.solar { position: relative; width: var(--sun); height: calc(var(--sun) / 2); margin-top: auto; flex: none; }
+.solar { position: relative; width: var(--sun); height: calc(var(--sun) / 2); margin-top: auto; padding-top: 0; flex: none; }
+@media (max-width: 899px) { .sky { min-height: 0; } .solar { margin-top: 64px; } }
 .solar svg { position: absolute; left: 50%; bottom: 0; width: calc(var(--sun) * 3); height: calc(var(--sun) * 1.5); transform: translateX(-50%); overflow: visible; }
 .disc { fill: var(--ember); transform-box: view-box; }
 .ring { fill: var(--ember); fill-opacity: 0; transform-box: view-box; }
@@ -107,7 +105,7 @@ textarea {
   font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; font-size: 21px; line-height: 1.4; text-align: center;
   resize: none; overflow: hidden; padding: 0 0 4px; caret-color: var(--cream);
 }
-textarea::placeholder { color: #6E6A64; }
+textarea::placeholder { color: #8A847B; }
 .mirror {
   margin-top: 6px; min-height: 29px; text-align: center; white-space: pre-wrap; overflow-wrap: break-word;
   font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; font-size: 21px; line-height: 1.4; color: var(--cream);
@@ -136,20 +134,6 @@ textarea::placeholder { color: #6E6A64; }
 .ok input:focus-visible { outline: 1px solid var(--cream); outline-offset: 3px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
-.done { display: none; }
-body.sent .form { display: none; }
-body.sent .done { display: block; }
-.done h2 {
-  font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal;
-  font-size: 44px; letter-spacing: -0.03em; line-height: .95; margin: 0;
-}
-.done p { font-size: 16px; line-height: 1.6; color: #D9D1C3; margin: 14px 0 0; }
-.done blockquote {
-  margin: 20px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line);
-  font-size: 18px; line-height: 1.5; font-style: italic; color: var(--cream);
-}
-.done .row { justify-content: center; }
-
 /* Intro */
 h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .1em; margin-bottom: -.1em; }
 h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.24,1) both; animation-delay: calc(.45s + var(--i) * .09s); }
@@ -167,20 +151,24 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
   .card { opacity: 1; transform: none; transition: none; }
 }
 
-.thanks, .mark { position: relative; }
-.thanks {
-  margin: 96px 0 0; text-align: center; max-width: 520px;
-  opacity: 0; transform: translateY(24px); transition: opacity 1.2s ease, transform 1.3s cubic-bezier(.16,.84,.24,1);
-}
-.thanks h3 { margin: 0; font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal; font-size: clamp(40px, 11vw, 64px); letter-spacing: -0.03em; line-height: .9; color: var(--cream); }
-.thanks p { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); }
-.mark { width: 84px; height: auto; display: block; margin: 44px 0 8px; opacity: 0; transform: translateY(16px); transition: opacity 1.2s ease .2s, transform 1.3s cubic-bezier(.16,.84,.24,1) .2s; }
-.thanks.in, .mark.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .thanks, .mark { opacity: 1; transform: none; transition: none; } }
+/* After sending: its own page */
+.after { position: fixed; inset: 0; z-index: 4; background: var(--ink); display: flex; flex-direction: column; justify-content: space-between; padding: max(56px, env(safe-area-inset-top)) 22px max(36px, env(safe-area-inset-bottom)); overflow-y: auto; opacity: 0; transition: opacity .9s ease; }
+.after[hidden] { display: none; }
+.after.in { opacity: 1; }
+.after-in { margin-top: 18vh; max-width: 900px; }
+.after h2 { margin: 0; font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal; font-size: clamp(56px, 16vw, 140px); letter-spacing: -0.035em; line-height: .86; color: var(--cream); }
+.after p { margin: 20px 0 0; font-size: 17px; line-height: 1.55; color: #D9D1C3; max-width: 300px; }
+.after blockquote { margin: 40px 0 0; font-size: 15px; line-height: 1.55; color: var(--muted); max-width: 320px; }
+.after blockquote::before { content: "\201C"; } .after blockquote::after { content: "\201D"; }
+.after .act { margin-top: 28px; }
+.mark { width: 72px; height: auto; display: block; align-self: center; margin-top: 48px; }
+body.sent { overflow: hidden; }
+@media (min-width: 900px) { .after { padding-left: 6vw; padding-right: 6vw; } }
 .grain { position: fixed; inset: 0; pointer-events: none; z-index: 5; background: url(grain.webp) repeat; background-size: 256px 256px; opacity: .14; }
 
 @media (min-width: 900px) {
-  .copy { margin-top: 36px; }
+  .sky { padding-left: 6vw; padding-right: 6vw; }
+  .copy { margin-top: 40px; }
   .water { padding-top: 64px; }
 }
 </style>
@@ -213,7 +201,7 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
       <form class="form" id="f" novalidate>
         <label class="q" for="line">What's in your head right now?</label>
         <div class="field">
-          <textarea id="line" name="line" maxlength="160" rows="1" placeholder="On the night bus, still replaying what she said." autocomplete="off" required></textarea>
+          <textarea id="line" name="line" maxlength="160" rows="1" placeholder="Write it here." autocomplete="off" required></textarea>
         </div>
         <div class="mirror" id="mirror" aria-hidden="true"></div>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -222,17 +210,18 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
         <p class="err" id="err" role="alert"></p>
         <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
       </form>
-      <div class="done" aria-live="polite">
-        <h2 id="doneTitle">Heard.</h2>
-        <p id="doneText">Come back tomorrow. It will sound different.</p>
-        <blockquote id="echo"></blockquote>
-        <div class="row"><span></span><button class="act" type="button" id="again">Write another</button></div>
-      </div>
     </div>
-    <div class="thanks"><h3>You're early.</h3><p>Thank you for being part of it.</p></div>
-    <svg class="mark" role="img" aria-label="APUS" viewBox="10 28 80 44"><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg>
   </section>
 </main>
+<section class="after" id="after" aria-live="polite" hidden>
+  <div class="after-in">
+    <h2>You're early.</h2>
+    <p>Thank you for being part of it.</p>
+    <blockquote id="echo"></blockquote>
+    <button class="act" type="button" id="again">Write another</button>
+  </div>
+  <svg class="mark" role="img" aria-label="APUS" viewBox="10 28 80 44"><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg>
+</section>
 <div class="grain" aria-hidden="true"></div>
 
 <script>
@@ -262,7 +251,7 @@ function update() {
   send.disabled = line.value.trim().length < 3;
   line.style.height = 'auto';
   line.style.height = line.scrollHeight + 'px';
-  m.style.height = (line.scrollHeight - 12) + 'px';
+  m.style.height = (line.scrollHeight - 4) + 'px';
 }
 line.addEventListener('input', update);
 
@@ -318,14 +307,20 @@ $('f').addEventListener('submit', async (e) => {
 
 function finish(text, at) {
   $('echo').textContent = text;
-  $('doneText').textContent = "Come back tomorrow. It will sound different.";
+  const a = $('after');
+  a.hidden = false;
   document.body.classList.add('sent');
+  requestAnimationFrame(() => requestAnimationFrame(() => a.classList.add('in')));
 }
 
 $('again').addEventListener('click', () => {
   line.value = ''; update();
+  const a = $('after');
+  a.classList.remove('in');
   document.body.classList.remove('sent');
-  line.focus();
+  setTimeout(() => { a.hidden = true; }, 900);
+  line.focus({ preventScroll: true });
+  document.querySelector('.card').scrollIntoView({ block: 'center' });
 });
 update();
 
@@ -374,9 +369,7 @@ update();
       es.forEach((e) => { if (e.isIntersecting) { card.classList.add('in'); io.disconnect(); setTimeout(() => { card.style.transitionDelay = '0s'; }, 2200); } });
     }, { threshold: 0.05 });
     io.observe(card);
-    const io2 = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io2.unobserve(e.target); } }); }, { threshold: 0.3 });
-    document.querySelectorAll('.thanks, .mark').forEach((el) => io2.observe(el));
-  } else { card.classList.add('in'); document.querySelectorAll('.thanks, .mark').forEach((el) => el.classList.add('in')); }
+  } else { card.classList.add('in'); }
 })();
 </script>
 </body>
