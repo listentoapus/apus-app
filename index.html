@@ -72,7 +72,7 @@ h1 {
   position: relative; flex: 1 0 auto;
   overflow: hidden;
   padding: 44px 16px max(40px, env(safe-area-inset-bottom));
-  display: flex; justify-content: center; align-items: flex-start;
+  display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
 }
 .waves, .reflection, .shade { position: absolute; pointer-events: none; }
 .waves { left: -40px; top: 0; width: calc(100% + 80px); height: 100%; animation: drift 11s ease-in-out infinite alternate; }
@@ -171,6 +171,18 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
   .card { opacity: 1; transform: none; filter: none; transition: none; }
 }
 
+.act sup { font-size: .55em; margin-left: 2px; vertical-align: super; line-height: 0; }
+.note { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.5; color: var(--muted); }
+.thanks, .mark { position: relative; }
+.thanks {
+  margin: 56px 0 0; text-align: center;
+  font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 100%;
+  font-size: clamp(24px, 6.2vw, 38px); letter-spacing: -0.03em; line-height: 1.05; text-wrap: balance; max-width: 520px;
+  opacity: 0; transform: translateY(24px); transition: opacity 1.2s ease, transform 1.3s cubic-bezier(.16,.84,.24,1);
+}
+.mark { width: 56px; height: 56px; display: block; margin: 44px 0 8px; border-radius: 13px; box-shadow: 0 0 0 1px #2A2A2E; opacity: 0; transform: translateY(16px); transition: opacity 1.2s ease .2s, transform 1.3s cubic-bezier(.16,.84,.24,1) .2s; }
+.thanks.in, .mark.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .thanks, .mark { opacity: 1; transform: none; transition: none; } }
 .grain { position: fixed; inset: 0; pointer-events: none; opacity: .16; mix-blend-mode: overlay; z-index: 5; }
 
 @media (min-width: 900px) {
@@ -235,12 +247,12 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
           <label for="handle">Leave your @ if you want to hear back. Optional.</label>
           <input type="text" id="handle" name="handle" maxlength="60" placeholder="@" autocomplete="off" autocapitalize="off" spellcheck="false">
         </div></div>
-        <label class="ok"><input type="checkbox" id="consent"><span>Keep my line. It's stored without my name and never shown with it.</span></label>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="row">
           <div class="fine"></div>
-          <button class="act" type="submit" id="send" disabled>Send</button>
+          <button class="act" type="submit" id="send" disabled>Send<sup>*</sup></button>
         </div>
+        <p class="note">* Sending means you're ok with your line being kept. It's stored anonymously in the EU, never shown with your name or @, and never sold or shared. Your @ is optional and only used to reply to you.</p>
         <p class="err" id="err" role="alert"></p>
       </form>
       <div class="done" aria-live="polite">
@@ -250,6 +262,8 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
         <div class="row"><button class="act" type="button" id="again">Write another</button></div>
       </div>
     </div>
+    <p class="thanks">You're early.<br>Thank you for being part of it.</p>
+    <svg class="mark" role="img" aria-label="APUS" viewBox="0 0 100 100"><rect width="100" height="100" rx="23" fill="#0B0B0C"/><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg>
   </section>
 </main>
 <svg class="grain" aria-hidden="true" width="100%" height="100%"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>
@@ -262,7 +276,7 @@ const APUS_CONFIG = {
   table: "vibes",
   textColumn: "feeling",
   handleColumn: "contact",
-  extra: { consent: true } // only sent once the person ticks the box
+  extra: { consent: true } // sending = consent, explained in the * note under SEND
 };
 const DAILY_LIMIT = 5;
 /* ================================================================ */
@@ -275,13 +289,12 @@ function update() {
   $('count').textContent = n + ' / 160';
   $('count').classList.toggle('full', n >= 160);
   $('bar').style.width = (n / 160 * 100) + '%';
-  send.disabled = line.value.trim().length < 3 || !$('consent').checked;
+  send.disabled = line.value.trim().length < 3;
   if (line.value.trim().length >= 3) $('handleWrap').classList.add('on');
   line.style.height = 'auto';
   line.style.height = line.scrollHeight + 'px';
 }
 line.addEventListener('input', update);
-$('consent').addEventListener('change', update);
 
 function todayKey() { return 'apus-sent-' + new Date().toISOString().slice(0, 10); }
 function sentToday() { try { return parseInt(localStorage.getItem(todayKey()) || '0', 10); } catch (e) { return 0; } }
@@ -320,7 +333,7 @@ $('f').addEventListener('submit', async (e) => {
   e.preventDefault();
   err.textContent = '';
   const text = line.value.trim().slice(0, 160);
-  if (text.length < 3 || !$('consent').checked) return;
+  if (text.length < 3) return;
   if ($('website').value) { finish(text, ''); return; }
   if (sentToday() >= DAILY_LIMIT) { err.textContent = "That's enough for today. Come back tomorrow."; return; }
   let at = handle.value.trim().replace(/\s+/g, '');
@@ -328,7 +341,7 @@ $('f').addEventListener('submit', async (e) => {
   send.disabled = true; send.textContent = 'Sending';
   let ok = false;
   try { ok = await save(text, at); } catch (x) { console.error(x); }
-  send.textContent = 'Send';
+  send.innerHTML = 'Send<sup>*</sup>';
   if (!ok) { err.textContent = "That didn't go through. Try again."; send.disabled = false; return; }
   markSent();
   finish(text, at);
@@ -343,7 +356,7 @@ function finish(text, at) {
 }
 
 $('again').addEventListener('click', () => {
-  line.value = ''; $('consent').checked = false; update();
+  line.value = ''; update();
   document.body.classList.remove('sent');
   line.focus();
 });
@@ -353,6 +366,7 @@ update();
 (function () {
   const sky = document.querySelector('.sky');
   const copy = document.querySelector('.copy');
+  const wm = document.querySelector('.wordmark');
   const rays = [...document.querySelectorAll('.ray')];
   const rings = [...document.querySelectorAll('.ring')];
   const disc = document.querySelector('.disc');
@@ -378,6 +392,7 @@ update();
     disc.style.transform = 'scale(' + (1 + 0.035 * ease(p)) + ')';
     copy.style.transform = 'translateY(' + (-34 * ease(p)) + 'px)';
     copy.style.opacity = String(1 - 0.4 * ease(p));
+    if (wm) wm.style.transform = copy.style.transform;
     if (refl) refl.style.opacity = String(0.75 + 0.25 * ease(p));
   }
   function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
@@ -391,7 +406,9 @@ update();
       es.forEach((e) => { if (e.isIntersecting) { card.classList.add('in'); io.disconnect(); setTimeout(() => { card.style.transitionDelay = '0s'; }, 2200); } });
     }, { threshold: 0.05 });
     io.observe(card);
-  } else { card.classList.add('in'); }
+    const io2 = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io2.unobserve(e.target); } }); }, { threshold: 0.3 });
+    document.querySelectorAll('.thanks, .mark').forEach((el) => io2.observe(el));
+  } else { card.classList.add('in'); document.querySelectorAll('.thanks, .mark').forEach((el) => el.classList.add('in')); }
 })();
 </script>
 </body>
