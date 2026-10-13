@@ -47,18 +47,28 @@ body { font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; -we
 body.writing .ask { pointer-events: none; }
 body.writing .hint, body.writing .refl { transition: opacity .6s; opacity: 0 !important; animation: none; }
 
-/* writing on the mirror */
-.glass { position: fixed; z-index: 6; opacity: 0; pointer-events: none; transition: opacity .9s ease .9s; transform: rotate(-1.6deg); }
+/* writing on the mirror: a pane of glass laid over it */
+.glass { position: fixed; z-index: 6; opacity: 0; pointer-events: none; transition: opacity .9s ease 1.2s;
+  clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(112deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.03) 28%, rgba(255,255,255,.0) 29%, rgba(255,255,255,.07) 30%, rgba(255,255,255,0) 52%, rgba(255,255,255,.05) 78%, rgba(255,255,255,.12) 100%);
+  -webkit-backdrop-filter: blur(.5px) brightness(1.08); backdrop-filter: blur(.5px) brightness(1.08);
+  box-shadow: inset 0 0 0 1px rgba(241,233,220,.22), inset 0 0 60px rgba(241,233,220,.06); }
+.glass::before { content: ""; position: absolute; top: -20%; bottom: -20%; width: 34%; left: -50%; transform: skewX(-18deg);
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.14), rgba(255,255,255,0)); animation: sheen 7s ease-in-out infinite 2.4s; pointer-events: none; }
+@keyframes sheen { 0%, 70% { left: -50%; } 100% { left: 130%; } }
 body.writing .glass { opacity: 1; pointer-events: auto; }
-.glass textarea, .glass .shown { position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: transparent; font: italic 19px/1.45 'Libre Baskerville', Georgia, serif; text-align: center; white-space: pre-wrap; overflow-wrap: break-word; }
-.glass textarea { color: transparent; caret-color: var(--ember); outline: none; resize: none; -webkit-appearance: none; appearance: none; }
-.glass textarea::placeholder { color: rgba(241,233,220,.42); }
-.glass .shown { pointer-events: none; color: var(--cream); text-shadow: 0 0 1px rgba(241,233,220,.4); }
+.pane { position: absolute; left: 11%; right: 11%; top: 14%; text-align: center; transform: rotate(-1.4deg); }
+.pane .sub { margin: 0 auto; max-width: 260px; font-size: 14px; line-height: 1.2; letter-spacing: -0.005em; color: var(--muted); }
+.field { position: relative; margin-top: 30px; min-height: 120px; }
+.field textarea, .field .shown { position: absolute; left: 0; right: 0; top: 0; min-height: 120px; height: 100%; margin: 0; padding: 0; border: 0; background: transparent; font: italic 20px/1.45 'Libre Baskerville', Georgia, serif; text-align: center; white-space: pre-wrap; overflow-wrap: break-word; }
+.field textarea { color: transparent; caret-color: var(--ember); outline: none; resize: none; overflow: hidden; -webkit-appearance: none; appearance: none; }
+.field textarea::placeholder { color: rgba(241,233,220,.45); }
+.field .shown { pointer-events: none; color: var(--cream); text-shadow: 0 0 1px rgba(241,233,220,.45), 0 0 14px rgba(241,233,220,.12); }
 .shown .w { transition: opacity 2.4s ease, filter 2.4s ease; }
 .shown .w.new { animation: condense .7s ease; }
 @keyframes condense { from { opacity: 0; filter: blur(6px); } }
 .shown .w.old { opacity: .3; filter: blur(.8px); }
-.shown.fall .w { transition: transform 1.4s cubic-bezier(.6,0,.6,1), opacity 1.4s, filter 1.4s; transform: translateY(160px); opacity: 0; filter: blur(6px); }
+.shown.fall .w { transition: transform 1.2s cubic-bezier(.6,0,.6,1), opacity 1.2s, filter 1.2s; transform: translateY(160px); opacity: 0; filter: blur(6px); }
 
 .foot { position: fixed; left: 0; right: 0; bottom: max(22px, env(safe-area-inset-bottom)); z-index: 7; text-align: center; padding: 0 24px; opacity: 0; pointer-events: none; transition: opacity .8s ease 1.4s; }
 body.writing .foot { opacity: 1; pointer-events: auto; }
@@ -69,13 +79,16 @@ body.writing .foot { opacity: 1; pointer-events: auto; }
 body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
 
 /* after: thank you surfaces as a reflection first, then turns upright */
-.after { position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: rgba(11,11,12,0); pointer-events: none; transition: background 1.6s ease; }
+.after { position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: rgba(11,11,12,0); pointer-events: none; transition: background .8s ease; }
 .after.in { background: rgba(11,11,12,.92); pointer-events: auto; }
 .after h2 { margin: 0; font-size: clamp(56px, 16vw, 128px); line-height: .86; opacity: 0; transform: scaleY(-1); filter: blur(8px); }
-.after.in h2 { animation: surface 2.6s cubic-bezier(.6,0,.2,1) forwards .6s; }
+.after.in h2 { animation: surface 1.7s cubic-bezier(.6,0,.2,1) forwards .2s; }
 @keyframes surface { 0% { opacity: 0; transform: translateY(40%) scaleY(-1); filter: blur(8px); } 45% { opacity: .35; transform: translateY(40%) scaleY(-1); filter: blur(3px); } 100% { opacity: 1; transform: none; filter: blur(0); } }
 .after p { margin: 20px 0 0; font-size: 16px; line-height: 1.55; color: #D9D1C3; max-width: 290px; opacity: 0; }
-.after.in p { animation: emerge 1.6s ease forwards 3.1s; filter: blur(6px); }
+.after.in p { animation: emerge 1.2s ease forwards 1.6s; filter: blur(6px); }
+.after .mark { position: absolute; left: 50%; bottom: max(44px, calc(env(safe-area-inset-bottom) + 28px)); width: 76px; transform: translateX(-50%); opacity: 0; }
+.after.in .mark { animation: fadeup 1.2s ease forwards 2.2s; }
+@keyframes fadeup { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .hp { position: absolute; left: -9999px; }
 </style>
 </head>
@@ -96,8 +109,13 @@ body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
 </div>
 
 <div class="glass" id="glass">
-  <div class="shown" id="shown" aria-hidden="true"></div>
-  <textarea id="line" maxlength="160" placeholder="The text you'd send at 2am. Or the one you never send." autocomplete="off" aria-label="What's in your head right now?"></textarea>
+  <div class="pane">
+    <p class="sub disp">The text you'd send at 2am. Or the one you never send.</p>
+    <div class="field">
+      <div class="shown" id="shown" aria-hidden="true"></div>
+      <textarea id="line" maxlength="160" placeholder="Write it here." autocomplete="off" aria-label="What's in your head right now?"></textarea>
+    </div>
+  </div>
 </div>
 <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 
@@ -106,7 +124,8 @@ body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
   <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
 </div>
 
-<section class="after" id="after" aria-live="polite"><h2 class="disp">Thank you.</h2><p>You were here before the sun went down.</p></section>
+<section class="after" id="after" aria-live="polite"><h2 class="disp">Thank you.</h2><p>You were here before the sun went down.</p>
+  <svg class="mark" role="img" aria-label="APUS" viewBox="10 28 80 44"><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg></section>
 <div class="grain" aria-hidden="true"></div>
 
 <script>
@@ -136,8 +155,7 @@ let writing = false;
 function mirrorRect() { return win.getBoundingClientRect(); }
 function placeGlass() {
   const r = mirrorRect();
-  const padX = r.width * 0.12, top = r.top + r.height * 0.08, h = r.height * 0.42;
-  Object.assign(glass.style, { left: (r.left + padX) + 'px', width: (r.width - padX * 2) + 'px', top: top + 'px', height: h + 'px' });
+  Object.assign(glass.style, { left: r.left + 'px', width: r.width + 'px', top: r.top + 'px', height: r.height + 'px' });
 }
 function enter() {
   if (writing) return; writing = true;
@@ -145,9 +163,9 @@ function enter() {
   const vw = innerWidth, vh = innerHeight;
   const before = zoom.style.transform; zoom.style.transform = 'none';
   const r = mirrorRect(); zoom.style.transform = before;
-  const s = Math.min((vw * 0.86) / r.width, (vh * 0.62) / r.height);
+  const s = Math.max((vh * 1.04) / r.height, (vw * 0.84) / r.width);
   const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  const tx = vw / 2 - cx, ty = vh * 0.40 - cy;
+  const tx = vw / 2 - cx, ty = vh * 0.5 - cy;
   zoom.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
   document.body.classList.add('writing');
   setTimeout(() => { placeGlass(); line.focus({ preventScroll: true }); }, 1650);
@@ -186,7 +204,7 @@ function age() {
     s.classList.toggle('old', total - i > 4 && now - stamps[i] > 3500);
   });
 }
-line.addEventListener('input', render); setInterval(age, 400); render();
+line.addEventListener('input', () => { render(); line.style.height = 'auto'; line.style.height = Math.max(120, line.scrollHeight) + 'px'; }); setInterval(age, 400); render();
 
 async function save(text) {
   if (PREVIEW) { await new Promise((r) => setTimeout(r, 500)); return true; }
@@ -201,8 +219,8 @@ send.addEventListener('click', async () => {
   shown.querySelectorAll('.w').forEach((s, i) => { s.classList.remove('old'); s.style.transitionDelay = (i * 0.06) + 's'; });
   shown.classList.add('fall');
   sun.style.transform = 'translateY(110%)'; rsun.style.transform = 'scaleY(0)';
-  setTimeout(() => { glass.style.transition = 'opacity .6s'; glass.style.opacity = '0'; zoom.style.transform = 'none'; }, 1500);
-  setTimeout(() => $('after').classList.add('in'), 3000);
+  setTimeout(() => { glass.style.transition = 'opacity .5s'; glass.style.opacity = '0'; zoom.style.transform = 'none'; }, 1100);
+  setTimeout(() => $('after').classList.add('in'), 1700);
 });
 </script>
 </body>
