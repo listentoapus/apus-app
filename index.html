@@ -36,12 +36,14 @@ main { min-height: 100svh; display: flex; flex-direction: column; position: rela
 /* Sky: still */
 .sky {
   background: var(--dusk);
+  position: relative; overflow: hidden;
+  min-height: calc(100svh - 130px);
   padding: max(28px, env(safe-area-inset-top)) 22px 0;
   display: flex; flex-direction: column; align-items: center;
   text-align: center;
 }
-.wordmark { width: 132px; height: auto; display: block; }
-.copy { max-width: 560px; margin: 28px auto 26px; }
+.wordmark { width: 132px; height: auto; display: block; position: relative; z-index: 2; animation: soft 1.4s ease .1s both; }
+.copy { position: relative; z-index: 2; max-width: 560px; margin: 28px auto 26px; will-change: transform, opacity; }
 h1 {
   font-family: 'Anybody', sans-serif;
   font-weight: 800; font-stretch: 100%;
@@ -55,8 +57,13 @@ h1 {
   color: #D9D1C3; margin: 18px auto 0; max-width: 440px;
   text-wrap: pretty;
 }
-.sun { width: var(--sun); height: calc(var(--sun) / 2); display: block; margin-top: auto; transition: transform 1.6s cubic-bezier(.2,.7,.2,1); }
-.sun svg { width: 100%; height: 100%; display: block; }
+.solar { position: relative; width: var(--sun); height: calc(var(--sun) / 2); margin-top: auto; flex: none; }
+.solar svg { position: absolute; left: 50%; bottom: 0; width: calc(var(--sun) * 3); height: calc(var(--sun) * 1.5); transform: translateX(-50%); overflow: visible; }
+.disc { fill: var(--ember); transform-box: view-box; }
+.ring { fill: var(--ember); fill-opacity: 0; transform-box: view-box; }
+.ray { stroke: var(--ember); stroke-width: 1.6; stroke-linecap: butt; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+.sun-g { animation: rise 2s cubic-bezier(.16,.84,.24,1) .15s both; }
+@keyframes rise { from { transform: translateY(104px); } }
 
 .horizon { height: 2px; background: var(--cream); width: 100%; }
 
@@ -74,7 +81,7 @@ h1 {
 .shade { inset: 0; background: linear-gradient(to bottom, rgba(11,11,12,0) 30%, rgba(11,11,12,.85) 100%); }
 @keyframes drift { from { transform: translateX(-24px); } to { transform: translateX(24px); } }
 @keyframes shimmer { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
-@media (prefers-reduced-motion: reduce) { .waves, .reflection .hl { animation: none; } .sun { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .waves, .reflection .hl { animation: none; } }
 
 /* The card */
 .card {
@@ -126,6 +133,11 @@ input[type="text"]:focus { border-bottom-color: var(--cream); }
 .act:not(:disabled):hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 .act:focus-visible { outline: 1px solid var(--cream); outline-offset: 4px; }
 .err { margin: 14px 0 0; font-size: 15px; color: var(--cream); min-height: 0; }
+.ok { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 14px; line-height: 1.4; color: var(--muted); cursor: pointer; }
+.ok input { -webkit-appearance: none; appearance: none; flex: none; width: 18px; height: 18px; margin: 1px 0 0; border: 1px solid var(--muted); border-radius: 0; background: transparent; display: grid; place-items: center; cursor: pointer; }
+.ok input:checked { background: var(--cream); border-color: var(--cream); }
+.ok input:checked::after { content: ""; width: 8px; height: 4px; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: translateY(-1px) rotate(-45deg); }
+.ok input:focus-visible { outline: 1px solid var(--cream); outline-offset: 3px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
 .done { display: none; }
@@ -141,6 +153,23 @@ body.sent .done { display: block; }
   font-size: 19px; line-height: 1.4; color: var(--cream);
 }
 .done .row { justify-content: flex-end; }
+
+/* Intro */
+h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .1em; margin-bottom: -.1em; }
+h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.24,1) both; animation-delay: calc(.45s + var(--i) * .09s); }
+@keyframes up { from { transform: translateY(108%); } }
+@keyframes soft { from { opacity: 0; filter: blur(8px); transform: translateY(8px); } }
+.lede { animation: soft 1.3s ease 1.05s both; }
+.horizon { transform-origin: 50% 50%; animation: draw 1.6s cubic-bezier(.65,0,.35,1) .05s both; }
+@keyframes draw { from { transform: scaleX(0); } }
+.water > svg { animation: fadein 2s ease .4s both; }
+@keyframes fadein { from { opacity: 0; } }
+.card { opacity: 0; transform: translateY(36px); filter: blur(6px); transition: opacity 1.1s ease, transform 1.2s cubic-bezier(.16,.84,.24,1), filter 1.1s ease; transition-delay: .9s; }
+.card.in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) {
+  h1 .w > span, .lede, .wordmark, .horizon, .sun-g, .water > svg { animation: none; }
+  .card { opacity: 1; transform: none; filter: none; transition: none; }
+}
 
 .grain { position: fixed; inset: 0; pointer-events: none; opacity: .16; mix-blend-mode: overlay; z-index: 5; }
 
@@ -164,11 +193,17 @@ body.sent .done { display: block; }
 <g clip-path="url(#wm-b)"><g filter="url(#wm-s)"><path transform="translate(404.7 1590.0) scale(1 -1)" d="M64.32115689665079 0H394.3738833665848L500.97900546342134 336.5721541121602H1019.5285838395357L1125.0337303504348 0H1455.0864568203688L983.978992253542 1352.1978699192405H535.3274292126298ZM557.5562261268497 545.6816179528832 759.0202161371708 1168.1418033018708H762.2213839739561L963.6853739842772 545.6816179528832Z" fill="#FF5A1F"/><path transform="translate(1893.7 1590.0) scale(1 -1)" d="M86.62378535419703 0H406.1699038743973V367.59323639422655H824.3380721732974Q1078.2573482766747 367.59323639422655 1165.5265874750912 507.24081536382437Q1252.7958266735077 646.8883943334222 1252.7958266735077 859.8641831055284Q1252.7958266735077 1071.505377151072 1165.8935928791761 1210.752688575536Q1078.9913590848446 1350 824.3380721732974 1350H86.62378535419703ZM406.1699038743973 584.042808316648V1133.5504280775785H729.9235234111547Q841.2780800387263 1133.5504280775785 888.5489333234727 1067.799978621304Q935.8197866082191 1002.0495291650295 935.8197866082191 858.7642075195909Q935.8197866082191 715.2442667335272 888.9159387275577 649.6435375250876Q842.0120908468962 584.042808316648 729.9235234111547 584.042808316648Z" fill="#FF5A1F"/><path transform="translate(3204.7 1590.0) scale(1 -1)" d="M720.3139294236898 -7.4989054054021835Q1032.5334874764085 -7.4989054054021835 1189.3138547167182 101.21206991001964Q1346.094221957028 209.92304522544146 1346.094221957028 464.916343472898V1349.6340352222323H1026.5481034368277V499.7392053157091Q1026.5481034368277 343.56835735589266 952.7043272741139 276.25951193645597Q878.8605511114001 208.95066651701927 720.3139294236898 208.95066651701927Q561.7673077359796 208.95066651701927 487.9235315732658 276.6265173405409Q414.079755410552 344.3023681640625 414.079755410552 499.7392053157091V1349.6340352222323H94.53363689035177V464.916343472898Q94.53363689035177 209.92304522544146 251.3140041306615 101.21206991001964Q408.0943713709712 -7.4989054054021835 720.3139294236898 -7.4989054054021835Z" fill="#FF5A1F"/><path transform="translate(4649.7 1590.0) scale(1 -1)" d="M689.8098476827145 -7.4989054054021835Q1035.447048485279 -7.4989054054021835 1170.2159109152853 111.99428334832191Q1304.9847733452916 231.487472102046 1304.9847733452916 410.8878133445978Q1304.9847733452916 584.0228614732623 1191.1882852949202 654.206613637507Q1077.3917972445488 724.3903658017516 781.6581809148192 783.2171913534403Q596.0164886638522 820.1310712099075 484.4365578480065 856.297032866627Q372.85662703216076 892.4629945233464 372.85662703216076 988.3132595941424Q372.85662703216076 1062.6658339053392 455.88188999146223 1104.8762554042041Q538.9071529507637 1147.086676903069 680.1991016417742 1147.086676903069Q813.7808149680495 1147.086676903069 898.826168589294 1096.4486592523754Q983.8715222105384 1045.8106416016817 983.8715222105384 871.5201506018639H1303.7836055085063Q1303.7836055085063 1103.4267165064812 1166.6245251335204 1232.8141853027046Q1029.4654447585344 1362.201654098928 683.7357287928462 1362.201654098928Q340.8304575458169 1362.201654098928 202.7595871053636 1244.8917317092419Q64.68871666491032 1127.5818093195558 64.68871666491032 954.8811892420053Q64.68871666491032 781.0704920291901 180.9390142261982 704.734465226531Q297.1893117874861 628.398438423872 582.1494401395321 570.9367393106222Q771.8250962048769 534.3919329866767 881.5183632485569 499.0889219343662Q991.2116302922368 463.78591088205576 991.2116302922368 368.914467073977Q991.2116302922368 288.4644846916199 908.3693497218192 248.04027824103832Q825.5270691514015 207.61607179045677 686.9405178949237 207.61607179045677Q548.1560967192054 207.61607179045677 465.49471728503704 259.4028769992292Q382.8333378508687 311.1896822080016 382.8333378508687 489.6757460013032H63.65526536107063Q63.65526536107063 244.73707964271307 198.61231331154704 118.61908711865544Q333.56936126202345 -7.4989054054021835 689.8098476827145 -7.4989054054021835Z" fill="#FF5A1F"/></g></g>
 </svg>
     <div class="copy">
-      <h1>Today has a sound.</h1>
+      <h1 aria-label="Today has a sound."><span class="w" aria-hidden="true"><span style="--i:0">Today</span></span> <span class="w" aria-hidden="true"><span style="--i:1">has</span></span> <span class="w" aria-hidden="true"><span style="--i:2">a</span></span> <span class="w" aria-hidden="true"><span style="--i:3">sound.</span></span></h1>
       <p class="lede">Something is being made. Your line is part of it.</p>
     </div>
-    <div class="sun" aria-hidden="true">
-      <svg viewBox="0 0 200 100" preserveAspectRatio="none"><path d="M0 100 A100 100 0 0 1 200 100 Z" fill="#FF5A1F"/></svg>
+<div class="solar" aria-hidden="true">
+      <svg viewBox="-300 -150 600 150" preserveAspectRatio="xMidYMax meet">
+        <g class="sun-g">
+          <g class="aura"><circle class="ring" r="270" data-o="0.05"/><circle class="ring" r="214" data-o="0.08"/><circle class="ring" r="168" data-o="0.12"/><circle class="ring" r="132" data-o="0.18"/></g>
+          <g class="rays"><line class="ray" x1="-112.0" y1="-30.0" x2="-214.4" y2="-57.5" pathLength="1"/><line class="ray" x1="-100.5" y1="-58.0" x2="-154.2" y2="-89.0" pathLength="1"/><line class="ray" x1="-82.0" y1="-82.0" x2="-157.0" y2="-157.0" pathLength="1"/><line class="ray" x1="-58.0" y1="-100.5" x2="-89.0" y2="-154.2" pathLength="1"/><line class="ray" x1="-30.0" y1="-112.0" x2="-57.5" y2="-214.4" pathLength="1"/><line class="ray" x1="-0.0" y1="-116.0" x2="-0.0" y2="-178.0" pathLength="1"/><line class="ray" x1="30.0" y1="-112.0" x2="57.5" y2="-214.4" pathLength="1"/><line class="ray" x1="58.0" y1="-100.5" x2="89.0" y2="-154.2" pathLength="1"/><line class="ray" x1="82.0" y1="-82.0" x2="157.0" y2="-157.0" pathLength="1"/><line class="ray" x1="100.5" y1="-58.0" x2="154.2" y2="-89.0" pathLength="1"/><line class="ray" x1="112.0" y1="-30.0" x2="214.4" y2="-57.5" pathLength="1"/></g>
+          <path class="disc" d="M-100 0 A100 100 0 0 1 100 0 Z"/>
+        </g>
+      </svg>
     </div>
   </section>
   <div class="horizon" aria-hidden="true"></div>
@@ -194,15 +229,16 @@ body.sent .done { display: block; }
       <form class="form" id="f" novalidate>
         <label class="q" for="line">What's in your head right now?</label>
         <p class="hint">Say it like you'd text the one person who gets it. Where you are, what you can't let go of.</p>
-        <textarea id="line" name="line" maxlength="160" rows="3" placeholder="On the night bus, still replaying what she said at dinner." autocomplete="off" required></textarea>
+        <textarea id="line" name="line" maxlength="160" rows="2" placeholder="On the night bus, still replaying what she said at dinner." autocomplete="off" required></textarea>
         <div class="meter" aria-hidden="true"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 160</span></div>
         <div class="handle" id="handleWrap"><div>
           <label for="handle">Leave your @ if you want to hear back. Optional.</label>
           <input type="text" id="handle" name="handle" maxlength="60" placeholder="@" autocomplete="off" autocapitalize="off" spellcheck="false">
         </div></div>
+        <label class="ok"><input type="checkbox" id="consent"><span>Keep my line. It's stored without my name and never shown with it.</span></label>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="row">
-          <div class="fine">Anonymous unless you leave your @.</div>
+          <div class="fine"></div>
           <button class="act" type="submit" id="send" disabled>Send</button>
         </div>
         <p class="err" id="err" role="alert"></p>
@@ -221,11 +257,12 @@ body.sent .done { display: block; }
 <script>
 /* ===== Fill these in from Supabase: Project Settings > API ===== */
 const APUS_CONFIG = {
-  supabaseUrl: "",      // e.g. "https://abcdxyz.supabase.co"
-  supabaseKey: "",      // the anon / publishable key (never the service_role / secret key)
-  table: "feelings",    // your table name
-  textColumn: "text",   // column for the line
-  handleColumn: "handle" // column for the @, or null if you don't have one
+  supabaseUrl: "https://wyqpxtfsgqfpnlufkvcg.supabase.co",
+  supabaseKey: "sb_publishable_4ZXzZizUU6g-vHd_vrpcwg_VLGoqjss", // publishable key, safe to be public (insert-only)
+  table: "vibes",
+  textColumn: "feeling",
+  handleColumn: "contact",
+  extra: { consent: true } // only sent once the person ticks the box
 };
 const DAILY_LIMIT = 5;
 /* ================================================================ */
@@ -238,12 +275,13 @@ function update() {
   $('count').textContent = n + ' / 160';
   $('count').classList.toggle('full', n >= 160);
   $('bar').style.width = (n / 160 * 100) + '%';
-  send.disabled = line.value.trim().length < 3;
+  send.disabled = line.value.trim().length < 3 || !$('consent').checked;
   if (line.value.trim().length >= 3) $('handleWrap').classList.add('on');
   line.style.height = 'auto';
   line.style.height = line.scrollHeight + 'px';
 }
 line.addEventListener('input', update);
+$('consent').addEventListener('change', update);
 
 function todayKey() { return 'apus-sent-' + new Date().toISOString().slice(0, 10); }
 function sentToday() { try { return parseInt(localStorage.getItem(todayKey()) || '0', 10); } catch (e) { return 0; } }
@@ -264,14 +302,14 @@ async function save(text, at) {
     await new Promise(r => setTimeout(r, 500));
     return true;
   }
-  const row = { [APUS_CONFIG.textColumn]: text };
+  const row = Object.assign({ [APUS_CONFIG.textColumn]: text }, APUS_CONFIG.extra || {});
   if (APUS_CONFIG.handleColumn && at) row[APUS_CONFIG.handleColumn] = at;
   let res = await insert(row);
   if (!res.ok && APUS_CONFIG.handleColumn && at) {
     // If the handle column doesn't exist, keep the line and drop the @.
     const body = await res.text();
     if (/PGRST204|column/i.test(body)) {
-      res = await insert({ [APUS_CONFIG.textColumn]: text });
+      res = await insert(Object.assign({ [APUS_CONFIG.textColumn]: text }, APUS_CONFIG.extra || {}));
     }
   }
   if (!res.ok) { console.error('APUS insert failed', res.status, await res.text()); }
@@ -282,7 +320,7 @@ $('f').addEventListener('submit', async (e) => {
   e.preventDefault();
   err.textContent = '';
   const text = line.value.trim().slice(0, 160);
-  if (text.length < 3) return;
+  if (text.length < 3 || !$('consent').checked) return;
   if ($('website').value) { finish(text, ''); return; }
   if (sentToday() >= DAILY_LIMIT) { err.textContent = "That's enough for today. Come back tomorrow."; return; }
   let at = handle.value.trim().replace(/\s+/g, '');
@@ -305,11 +343,56 @@ function finish(text, at) {
 }
 
 $('again').addEventListener('click', () => {
-  line.value = ''; update();
+  line.value = ''; $('consent').checked = false; update();
   document.body.classList.remove('sent');
   line.focus();
 });
 update();
+
+/* Scroll: the sun opens up */
+(function () {
+  const sky = document.querySelector('.sky');
+  const copy = document.querySelector('.copy');
+  const rays = [...document.querySelectorAll('.ray')];
+  const rings = [...document.querySelectorAll('.ring')];
+  const disc = document.querySelector('.disc');
+  const refl = document.querySelector('.reflection');
+  const clamp = (v) => Math.max(0, Math.min(1, v));
+  const ease = (v) => 1 - Math.pow(1 - v, 3);
+  let ticking = false;
+  function frame() {
+    ticking = false;
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const span = Math.max(120, Math.min(max, sky.offsetHeight * 0.55));
+    const p = clamp(window.scrollY / span);
+    rays.forEach((r, i) => {
+      const q = ease(clamp((p - i * 0.025) / 0.62));
+      r.style.strokeDashoffset = String(1 - q);
+      r.style.opacity = String(Math.min(1, q * 1.6));
+    });
+    rings.forEach((c, i) => {
+      const q = ease(clamp((p - (rings.length - 1 - i) * 0.07) / 0.55));
+      c.style.fillOpacity = String(parseFloat(c.dataset.o) * q);
+      c.style.transform = 'scale(' + (0.86 + 0.14 * q) + ')';
+    });
+    disc.style.transform = 'scale(' + (1 + 0.035 * ease(p)) + ')';
+    copy.style.transform = 'translateY(' + (-34 * ease(p)) + 'px)';
+    copy.style.opacity = String(1 - 0.4 * ease(p));
+    if (refl) refl.style.opacity = String(0.75 + 0.25 * ease(p));
+  }
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  frame();
+
+  const card = document.querySelector('.card');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { card.classList.add('in'); io.disconnect(); setTimeout(() => { card.style.transitionDelay = '0s'; }, 2200); } });
+    }, { threshold: 0.05 });
+    io.observe(card);
+  } else { card.classList.add('in'); }
+})();
 </script>
 </body>
 </html>
