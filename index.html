@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>APUS</title>
-<meta name="description" content="Today has a sound. Something is being made.">
+<meta name="description" content="Today has a sound. It starts with one line.">
 <meta name="theme-color" content="#101B3D">
 <meta property="og:title" content="APUS">
-<meta property="og:description" content="Today has a sound. Something is being made.">
+<meta property="og:description" content="Today has a sound. It starts with one line.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%230B0B0C'/%3E%3Cpath d='M22 58 A28 28 0 0 1 78 58 Z' fill='%23FF5A1F'/%3E%3Cellipse cx='56' cy='66' rx='34' ry='5' fill='%23FFB15C' opacity='0.55'/%3E%3Crect x='12' y='57.5' width='76' height='1.5' fill='%23F1E9DC'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,7 +98,8 @@ h1 {
   font-size: clamp(34px, 10vw, 46px); letter-spacing: -0.03em; line-height: .92; margin: 0; display: block;
   text-align: center; text-wrap: balance;
 }
-.field { margin-top: 56px; }
+.sub { margin: 18px auto 0; max-width: 300px; font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal; font-size: 15px; line-height: 1.25; letter-spacing: -0.005em; color: var(--muted); text-wrap: balance; }
+.field { margin-top: 48px; }
 textarea {
   display: block; width: 100%; background: transparent; color: var(--cream);
   border: 0; border-radius: 0; outline: none; -webkit-appearance: none; appearance: none;
@@ -124,7 +125,7 @@ textarea::placeholder { color: #8A847B; }
 .act:disabled { color: #3F3C39; cursor: default; }
 .act:not(:disabled):hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 .act:focus-visible { outline: 1px solid var(--cream); outline-offset: 4px; }
-.act sup { font-size: .55em; margin-left: 2px; vertical-align: super; line-height: 0; }
+.act sup { font-size: 1em; margin-left: -2px; position: relative; top: -.32em; vertical-align: baseline; line-height: 0; color: var(--muted); }
 .note { margin: 26px auto 0; max-width: 300px; text-align: center; font-size: 12.5px; line-height: 1.6; color: #7D776F; }
 .err { margin: 14px 0 0; font-size: 15px; color: var(--cream); min-height: 0; }
 .ok { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 14px; line-height: 1.4; color: var(--muted); cursor: pointer; }
@@ -152,16 +153,13 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
 }
 
 /* After sending: its own page */
-.after { position: fixed; inset: 0; z-index: 4; background: var(--ink); display: flex; flex-direction: column; justify-content: space-between; padding: max(56px, env(safe-area-inset-top)) 22px max(36px, env(safe-area-inset-bottom)); overflow-y: auto; opacity: 0; transition: opacity .9s ease; }
+.after { position: fixed; inset: 0; z-index: 4; background: var(--ink); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: max(56px, env(safe-area-inset-top)) 22px max(36px, env(safe-area-inset-bottom)); overflow-y: auto; opacity: 0; transition: opacity .9s ease; }
 .after[hidden] { display: none; }
 .after.in { opacity: 1; }
-.after-in { margin-top: 18vh; max-width: 900px; }
+.after-in { margin: auto 0; text-align: center; }
 .after h2 { margin: 0; font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal; font-size: clamp(56px, 16vw, 140px); letter-spacing: -0.035em; line-height: .86; color: var(--cream); }
-.after p { margin: 20px 0 0; font-size: 17px; line-height: 1.55; color: #D9D1C3; max-width: 300px; }
-.after blockquote { margin: 40px 0 0; font-size: 15px; line-height: 1.55; color: var(--muted); max-width: 320px; }
-.after blockquote::before { content: "\201C"; } .after blockquote::after { content: "\201D"; }
-.after .act { margin-top: 28px; }
-.mark { width: 72px; height: auto; display: block; align-self: center; margin-top: 48px; }
+.after p { margin: 20px 0 0; font-size: 17px; line-height: 1.55; color: #D9D1C3; max-width: 300px; margin-left: auto; margin-right: auto; }
+.mark { width: 72px; height: auto; display: block; flex: none; margin-top: 48px; }
 body.sent { overflow: hidden; }
 @media (min-width: 900px) { .after { padding-left: 6vw; padding-right: 6vw; } }
 .grain { position: fixed; inset: 0; pointer-events: none; z-index: 5; background: url(grain.webp) repeat; background-size: 256px 256px; opacity: .14; }
@@ -179,7 +177,7 @@ body.sent { overflow: hidden; }
     <img class="wordmark" src="wordmark.webp" alt="APUS" width="132" height="38">
     <div class="copy">
       <h1 aria-label="Today has a sound."><span class="w" aria-hidden="true"><span style="--i:0">Today</span></span> <span class="w" aria-hidden="true"><span style="--i:1">has</span></span> <span class="w" aria-hidden="true"><span style="--i:2">a</span></span> <span class="w" aria-hidden="true"><span style="--i:3">sound.</span></span></h1>
-      <p class="lede">Something is being made. Your line is part of it.</p>
+      <p class="lede">It starts with one line. Yours.</p>
     </div>
 <div class="solar" aria-hidden="true">
       <svg viewBox="-300 -150 600 150" preserveAspectRatio="xMidYMax meet">
@@ -200,8 +198,9 @@ body.sent { overflow: hidden; }
     <div class="card">
       <form class="form" id="f" novalidate>
         <label class="q" for="line">What's in your head right now?</label>
+        <p class="sub" id="sub">What you'd tell a friend if they picked up. Or what you'd keep to yourself.</p>
         <div class="field">
-          <textarea id="line" name="line" maxlength="160" rows="1" placeholder="Write it here." autocomplete="off" required></textarea>
+          <textarea aria-describedby="sub" id="line" name="line" maxlength="160" rows="1" placeholder="Write it here." autocomplete="off" required></textarea>
         </div>
         <div class="mirror" id="mirror" aria-hidden="true"></div>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -215,10 +214,8 @@ body.sent { overflow: hidden; }
 </main>
 <section class="after" id="after" aria-live="polite" hidden>
   <div class="after-in">
-    <h2>You're early.</h2>
-    <p>Thank you for being part of it.</p>
-    <blockquote id="echo"></blockquote>
-    <button class="act" type="button" id="again">Write another</button>
+    <h2>Thank you.</h2>
+    <p>You were here before the sun went down.</p>
   </div>
   <svg class="mark" role="img" aria-label="APUS" viewBox="10 28 80 44"><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg>
 </section>
@@ -306,22 +303,12 @@ $('f').addEventListener('submit', async (e) => {
 });
 
 function finish(text, at) {
-  $('echo').textContent = text;
   const a = $('after');
   a.hidden = false;
   document.body.classList.add('sent');
   requestAnimationFrame(() => requestAnimationFrame(() => a.classList.add('in')));
 }
 
-$('again').addEventListener('click', () => {
-  line.value = ''; update();
-  const a = $('after');
-  a.classList.remove('in');
-  document.body.classList.remove('sent');
-  setTimeout(() => { a.hidden = true; }, 900);
-  line.focus({ preventScroll: true });
-  document.querySelector('.card').scrollIntoView({ block: 'center' });
-});
 update();
 
 /* Scroll: the sun opens up */
