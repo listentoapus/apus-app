@@ -88,32 +88,33 @@ h1 {
 .card {
   position: relative; width: 100%; max-width: 520px;
   padding: 8px 6px 0;
-  text-align: left;
+  text-align: center;
 }
 .q {
   font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 108%;
-  font-size: clamp(30px, 8.4vw, 46px); letter-spacing: -0.03em; line-height: .92; margin: 0; display: block;
-  text-wrap: balance;
+  font-size: clamp(34px, 10vw, 46px); letter-spacing: -0.03em; line-height: .92; margin: 0; display: block;
+  text-align: center; text-wrap: balance;
 }
-.hint { margin: 14px 0 0; font-size: 16px; line-height: 1.45; color: var(--muted); }
-.field { position: relative; margin-top: 34px; }
+.field { margin-top: 56px; }
 textarea {
   display: block; width: 100%; background: transparent; color: var(--cream);
   border: 0; border-radius: 0; outline: none; -webkit-appearance: none; appearance: none;
-  font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 24px; line-height: 1.3;
-  resize: none; min-height: 2.6em; padding: 0 0 10px; caret-color: var(--cream);
+  font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 24px; line-height: 1.3; text-align: center;
+  resize: none; overflow: hidden; padding: 0 0 12px; caret-color: var(--cream);
 }
-textarea::placeholder { color: #57534E; }
-.caret { position: absolute; left: -1px; top: 4px; width: 2px; height: 24px; background: var(--cream); animation: blink 1.05s steps(1) infinite; }
-.field:focus-within .caret, .field.filled .caret { display: none; }
-@keyframes blink { 50% { opacity: 0; } }
-.meter { position: relative; }
-.bar { height: 1px; background: #3A3733; position: relative; transition: background .3s; }
-.field:focus-within + .meter .bar { background: #6B665F; }
-.bar i { position: absolute; left: 0; top: -0.5px; height: 2px; width: 0; background: var(--cream); transition: width .15s; }
-.count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1em; }
+textarea::placeholder { color: #6E6A64; }
+.line { height: 1.5px; margin: 0 24px; background: var(--cream); animation: breathe 2.4s ease-in-out infinite; transition: opacity .3s; }
+.field:focus-within + .line, .field.filled + .line { animation: none; opacity: 1; }
+@keyframes breathe { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.mirror {
+  margin-top: 6px; min-height: 31px; text-align: center; white-space: pre-wrap; overflow-wrap: break-word;
+  font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 24px; line-height: 1.3; color: var(--cream);
+  opacity: .26; transform: scale(1.06, -1); filter: blur(2.5px); pointer-events: none; user-select: none;
+}
+.mirror.ph { color: #6E6A64; opacity: .32; }
+.count { display: block; min-height: 18px; margin-top: 18px; text-align: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .count.full { color: var(--cream); }
-.row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; }
+.form > .act { display: block; margin: 8px auto 0; }
 .act {
   background: none; border: 0; padding: 8px 0; margin: 0; cursor: pointer;
   font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 120%;
@@ -124,7 +125,7 @@ textarea::placeholder { color: #57534E; }
 .act:not(:disabled):hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 .act:focus-visible { outline: 1px solid var(--cream); outline-offset: 4px; }
 .act sup { font-size: .55em; margin-left: 2px; vertical-align: super; line-height: 0; }
-.note { margin: 26px 0 0; font-size: 13px; line-height: 1.45; color: #7D776F; }
+.note { margin: 26px auto 0; max-width: 300px; text-align: center; font-size: 13px; line-height: 1.45; color: #7D776F; }
 .err { margin: 14px 0 0; font-size: 15px; color: var(--cream); min-height: 0; }
 .ok { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 14px; line-height: 1.4; color: var(--muted); cursor: pointer; }
 .ok input { -webkit-appearance: none; appearance: none; flex: none; width: 18px; height: 18px; margin: 1px 0 0; border: 1px solid var(--muted); border-radius: 0; background: transparent; display: grid; place-items: center; cursor: pointer; }
@@ -145,7 +146,7 @@ body.sent .done { display: block; }
   margin: 20px 0 0; padding: 14px 0 0; border-top: 1px solid var(--line);
   font-size: 19px; line-height: 1.4; color: var(--cream);
 }
-.done .row { justify-content: flex-end; }
+.done .row { justify-content: center; }
 
 /* Intro */
 h1 .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .1em; margin-bottom: -.1em; }
@@ -209,17 +210,14 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
     <div class="card">
       <form class="form" id="f" novalidate>
         <label class="q" for="line">What's in your head right now?</label>
-        <p class="hint">Say it like you'd text the one person who gets it.</p>
         <div class="field">
-          <textarea id="line" name="line" maxlength="160" rows="2" placeholder="On the night bus, still replaying what she said." autocomplete="off" required></textarea>
-          <i class="caret" aria-hidden="true"></i>
+          <textarea id="line" name="line" maxlength="160" rows="1" placeholder="On the night bus, still replaying what she said." autocomplete="off" required></textarea>
         </div>
-        <div class="meter" aria-hidden="true"><div class="bar"><i id="bar"></i></div></div>
+        <div class="line" aria-hidden="true"></div>
+        <div class="mirror" id="mirror" aria-hidden="true"></div>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="row">
-          <span class="count" id="count"></span>
-          <button class="act" type="submit" id="send" disabled>Send<sup>*</sup></button>
-        </div>
+        <span class="count" id="count" aria-live="polite"></span>
+        <button class="act" type="submit" id="send" disabled>Send<sup>*</sup></button>
         <p class="err" id="err" role="alert"></p>
         <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
       </form>
@@ -254,13 +252,16 @@ const line = $('line'), send = $('send'), err = $('err');
 
 function update() {
   const n = line.value.length;
-  $('count').textContent = n ? n + '/160' : '';
-  line.parentNode.classList.toggle('filled', n > 0);
+  $('count').textContent = n >= 120 ? n + '/160' : '';
   $('count').classList.toggle('full', n >= 160);
-  $('bar').style.width = (n / 160 * 100) + '%';
+  line.parentNode.classList.toggle('filled', n > 0);
+  const m = $('mirror');
+  m.textContent = n ? line.value : line.placeholder;
+  m.classList.toggle('ph', !n);
   send.disabled = line.value.trim().length < 3;
   line.style.height = 'auto';
   line.style.height = line.scrollHeight + 'px';
+  m.style.height = (line.scrollHeight - 12) + 'px';
 }
 line.addEventListener('input', update);
 
@@ -363,6 +364,7 @@ update();
   function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
+  window.addEventListener('resize', update);
   frame();
 
   const card = document.querySelector('.card');
