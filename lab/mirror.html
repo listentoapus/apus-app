@@ -21,17 +21,19 @@ body.writing { cursor: auto; }
 .zoom { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .zoom.moving { will-change: transform; }
 .zoom img { position: absolute; display: block; }
-.full { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.75) brightness(.88); }
-.ghost { inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.6);
+.full { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.75) brightness(.88); transition: opacity 1.5s ease .35s; }
+body.writing .full, body.writing .ghost { opacity: 0 !important; }
+body.writing .win .below { background: transparent; }
+.ghost { inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.6); transition: opacity 1.1s ease;
   -webkit-mask-image: linear-gradient(#000 0, #000 30%, transparent 48%); mask-image: linear-gradient(#000 0, #000 30%, transparent 48%); }
 .win { position: absolute; left: 40.5%; top: 25%; width: 20%; height: 35%; overflow: hidden; clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%); }
-.win .shade { position: absolute; inset: 0; background: linear-gradient(rgba(11,11,12,.25), rgba(11,11,12,0) 55%); opacity: 0; transition: opacity 1.4s ease 1.2s; }
+.win .shade { position: absolute; inset: 0; background: #0B0B0C; opacity: 0; transition: opacity 1.5s ease .35s; }
 body.writing .win .shade { opacity: 1; }
 .win .dusk { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 1s ease; }
 .win .up { position: absolute; left: 0; right: 0; top: 0; height: 55%; overflow: hidden; }
 .win .sun { position: absolute; left: 20%; width: 60%; height: 22.5%; top: 77.5%; background: var(--ember); border-radius: 50% 50% 0 0 / 100% 100% 0 0; transition: transform 1.2s cubic-bezier(.4,0,.2,1); }
 .win .hz { position: absolute; left: 0; right: 0; top: 55%; height: 2px; background: var(--cream); opacity: .9; }
-.win .below { position: absolute; left: 0; right: 0; top: calc(55% + 2px); bottom: 0; background: linear-gradient(rgba(11,11,12,.35), rgba(11,11,12,.75)); overflow: hidden; }
+.win .below { position: absolute; left: 0; right: 0; top: calc(55% + 2px); bottom: 0; background: linear-gradient(rgba(11,11,12,.35), rgba(11,11,12,.75)); overflow: hidden; transition: background 1.5s ease .35s; }
 .win .rsun { position: absolute; left: 20%; width: 60%; top: 1%; height: 11%; background: var(--ember); border-radius: 0 0 50% 50% / 0 0 100% 100%; opacity: .16; filter: blur(2.4px); transform-origin: 50% 0; transition: transform 1.2s cubic-bezier(.4,0,.2,1); animation: rip 2.6s ease-in-out infinite; }
 @keyframes rip { 0%,100% { translate: 0 0; } 50% { translate: 3% 0; } }
 
@@ -64,10 +66,12 @@ body.ready .pane { opacity: 1; pointer-events: auto; }
 .pane .sub { margin: 0 auto; max-width: 280px; font-size: 15px; line-height: 1.2; letter-spacing: -0.005em; color: var(--muted); }
 .field { position: relative; margin: 24px auto 0; max-width: 440px; }
 .field textarea, .field .shown { margin: 0; padding: 0; border: 0; background: transparent; font: italic 21px/1.45 'Libre Baskerville', Georgia, serif; text-align: center; white-space: pre-wrap; overflow-wrap: break-word; }
-.field textarea { position: relative; display: block; width: 100%; min-height: 84px; color: transparent; caret-color: var(--ember); outline: none; resize: none; overflow: hidden; -webkit-appearance: none; appearance: none; }
+.field textarea { position: relative; display: block; width: 100%; min-height: 84px; color: var(--cream); overflow-wrap: anywhere; word-break: break-word; caret-color: var(--ember); outline: none; resize: none; overflow: hidden; -webkit-appearance: none; appearance: none; }
 .field textarea::placeholder { color: rgba(241,233,220,.45); }
-.field .shown { position: absolute; inset: 0; pointer-events: none; color: var(--cream); }
-.shown .w { display: inline-block; }
+.field .shown { position: absolute; inset: 0; pointer-events: none; color: var(--cream); overflow-wrap: anywhere; word-break: break-word; visibility: hidden; }
+.field.falling textarea { color: transparent; }
+.field.falling .shown { visibility: visible; }
+.shown .w { display: inline-block; max-width: 100%; }
 .shown.fall .w { transition: transform 1s cubic-bezier(.55,0,.75,.4), opacity 1s, filter 1s; transform: translateY(240px); opacity: 0; filter: blur(5px); }
 .act { display: block; margin: 12px auto 0; background: none; border: 0; padding: 6px 0; cursor: pointer; color: var(--cream); font-size: 17px; text-transform: uppercase; letter-spacing: .04em; transition: opacity .4s; }
 .act:disabled { opacity: 0; pointer-events: none; }
@@ -83,6 +87,9 @@ body.sent .foot { opacity: 0; }
 .fly { position: fixed; z-index: 12; pointer-events: none; transition: transform 1.25s var(--ease), opacity .35s ease; }
 .fly.sun { background: var(--ember); border-radius: 999px 999px 0 0; transform-origin: 50% 100%; }
 .fly.line { background: var(--cream); transform-origin: 50% 50%; }
+.spark { position: fixed; z-index: 12; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 18px 4px rgba(255,90,31,.55); opacity: 0; pointer-events: none; }
+.spark.on { animation: spark 1.1s ease forwards; }
+@keyframes spark { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1.35); } 60% { opacity: .95; transform: scale(1); } 100% { opacity: 0; transform: scale(.2); } }
 .after { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; pointer-events: none; }
 .after h2 { margin: 0; font-size: clamp(56px, 16vw, 128px); line-height: .86; opacity: 0; transform: translateY(14px); filter: blur(6px); }
 .after p { margin: 20px 0 0; font-size: 16px; line-height: 1.55; color: #D9D1C3; max-width: 290px; opacity: 0; filter: blur(6px); }
@@ -103,7 +110,7 @@ body.sent .foot { opacity: 0; }
     <div class="shade"></div><div class="dusk" id="dusk"></div>
     <div class="up"><div class="sun" id="sun"></div></div>
     <div class="hz" id="hz"></div>
-    <div class="below"><div class="rsun" id="rsun"></div></div>
+    <div class="below"></div>
   </div>
 </div></div>
 <div class="veil" aria-hidden="true"></div>
@@ -121,7 +128,7 @@ body.sent .foot { opacity: 0; }
   <p class="sub disp">The text you'd send at 2am. Or the one you never send.</p>
   <div class="field">
     <div class="shown" id="shown" aria-hidden="true"></div>
-    <textarea id="line" maxlength="160" placeholder="Write it here." autocomplete="off" aria-label="What's in your head right now?"></textarea>
+    <textarea id="line" maxlength="160" placeholder="Write it here." autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="sentences" aria-label="What's in your head right now?"></textarea>
   </div>
   <button class="act disp" id="send" type="button" disabled>Send<sup>*</sup></button>
 </div>
@@ -137,7 +144,7 @@ body.sent .foot { opacity: 0; }
 const PREVIEW = true; // lab: nothing is saved
 const CFG = { url: "https://wyqpxtfsgqfpnlufkvcg.supabase.co", key: "sb_publishable_4ZXzZizUU6g-vHd_vrpcwg_VLGoqjss", table: "vibes", col: "feeling" };
 const $ = (id) => document.getElementById(id);
-const zoom = $('zoom'), win = $('win'), sun = $('sun'), rsun = $('rsun'), hz = $('hz'), line = $('line'), shown = $('shown'), send = $('send');
+const zoom = $('zoom'), win = $('win'), sun = $('sun'), hz = $('hz'), line = $('line'), shown = $('shown'), send = $('send');
 const EASE = 'cubic-bezier(.65,0,.35,1)', DUR = 2200;
 const box = (el) => { const r = el.getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + r.height / 2, b: r.bottom }; };
 
@@ -164,14 +171,14 @@ function enter(e) {
   if (e && e.cancelable) e.preventDefault();
   document.querySelectorAll('#q .c, #qr .c').forEach((c) => c.classList.add('sink'));
   const vw = innerWidth, vh = innerHeight, m = box(win), st = box(zoom);
-  const s = (vw * 1.03) / m.w;   // the mirror fills the width; its top and bottom run off the screen
+  const s = Math.min((vw * 1.03) / m.w, (vh * 1.05) / m.h);
   zoom.style.transformOrigin = `${m.cx - st.l}px ${m.cy - st.t}px`;
   zoom.classList.add('moving');
   document.body.classList.add('writing');
   requestAnimationFrame(() => {
     zoom.style.transition = `transform ${DUR}ms ${EASE}`;
     zoom.style.transform = `translate(${vw / 2 - m.cx}px, ${vh / 2 - m.cy}px) scale(${s})`;
-    hz.style.transition = `transform ${DUR}ms ${EASE}`; hz.style.transform = `scaleY(${(1.25 / s).toFixed(3)})`;   // keep the horizon a hairline
+    hz.dataset.sy = (1.25 / s).toFixed(3); hz.style.transition = `transform ${DUR}ms ${EASE}`; hz.style.transform = `scaleY(${hz.dataset.sy})`;   // keep the horizon a hairline
   });
   setTimeout(() => {
     zoom.classList.remove('moving');            // lets the browser redraw the sun sharp at its new size
@@ -193,8 +200,6 @@ function render() {
   });
   const k = line.value.length / 160;
   sun.style.transform = `translateY(${(k * 100).toFixed(1)}%)`;
-  rsun.style.transform = `scaleY(${(1 - k).toFixed(3)})`;
-  $('dusk').style.opacity = (k * 0.55).toFixed(3);
   send.disabled = line.value.trim().length < 3;
 }
 line.addEventListener('input', () => { render(); line.style.height = 'auto'; line.style.height = Math.max(84, line.scrollHeight) + 'px'; });
@@ -206,39 +211,26 @@ async function save(text) {
   return r.ok;
 }
 
-/* send: words fall, the sun comes back up, leaves the horizon and shrinks into the logo, then thank you */
+/* send: the words fall, the sun sets all the way, the horizon closes into an orange spark, then thank you */
+let zoomScale = 1;
 send.addEventListener('click', async () => {
   const t = line.value.trim().slice(0, 160); if (t.length < 3) return;
   send.disabled = true;
   if (!$('website').value && !(await save(t))) { send.disabled = false; return; }
-  line.blur(); document.body.classList.add('sent');
+  line.blur(); render(); document.body.classList.add('sent');
+  document.querySelector('.field').classList.add('falling');
   shown.querySelectorAll('.w').forEach((w, i, all) => { w.style.transitionDelay = ((all.length - i) * 0.035) + 's'; });
-  shown.classList.add('fall');
+  requestAnimationFrame(() => shown.classList.add('fall'));
+  setTimeout(() => { sun.style.transition = 'transform 1.2s cubic-bezier(.5,0,.3,1)'; sun.style.transform = 'translateY(101%)'; $('dusk').style.opacity = '0'; }, 250);
   setTimeout(() => {
-    sun.style.transition = 'transform .9s cubic-bezier(.3,0,.2,1)'; sun.style.transform = 'none';
-    rsun.style.transform = 'scaleY(1)'; $('dusk').style.opacity = '0';
-  }, 300);
-  setTimeout(() => {
-    const R = box(sun), H = box(hz), mk = box($('mark'));
-    const T = { w: mk.w * 56 / 80, cx: mk.l + mk.w * 50 / 80, b: mk.t + mk.h * 30 / 44 };
-    const L = { w: mk.w * 76 / 80, cx: mk.l + mk.w * 50 / 80, cy: mk.t + mk.h * 58.25 / 44 * 1 - mk.h * 0 , h: mk.h * 1.5 / 44 };
-    L.cy = mk.t + mk.h * (58.25 - 28) / 44;
-    const fs = document.createElement('div'); fs.className = 'fly sun';
-    Object.assign(fs.style, { left: R.l + 'px', top: R.t + 'px', width: R.w + 'px', height: R.h + 'px' });
-    const fl = document.createElement('div'); fl.className = 'fly line';
-    Object.assign(fl.style, { left: H.l + 'px', top: H.t + 'px', width: H.w + 'px', height: H.h + 'px' });
-    document.body.append(fs, fl);
-    sun.style.visibility = 'hidden'; hz.style.visibility = 'hidden';
-    $('black').style.opacity = '1';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      fs.style.transform = `translate(${T.cx - R.cx}px, ${T.b - R.b}px) scale(${T.w / R.w})`;
-      fl.style.transform = `translate(${L.cx - H.cx}px, ${L.cy - H.cy}px) scale(${L.w / H.w}, ${Math.max(.5, L.h / H.h)})`;
-    }));
-    setTimeout(() => {
-      $('after').classList.add('in');
-      setTimeout(() => { fs.style.opacity = '0'; fl.style.opacity = '0'; }, 150);
-    }, 1300);
-  }, 1250);
+    const H = box(hz);
+    hz.style.transition = 'transform .9s cubic-bezier(.7,0,.3,1), opacity .25s ease .85s';
+    hz.style.transform = `scale(0, ${(hz.dataset.sy || 1)})`; hz.style.opacity = '0';
+    const sp = document.createElement('div'); sp.className = 'spark';
+    Object.assign(sp.style, { left: H.cx + 'px', top: H.cy + 'px' }); document.body.appendChild(sp);
+    setTimeout(() => sp.classList.add('on'), 700);
+  }, 1500);
+  setTimeout(() => { $('black').style.opacity = '1'; $('after').classList.add('in'); }, 3300);
 });
 </script>
 </body>
