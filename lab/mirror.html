@@ -2,37 +2,208 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="robots" content="noindex">
 <title>APUS</title>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@1&display=swap">
-<link rel="stylesheet" href="base.css">
-<style>:root{--ox:50%;--oy:43%}
-.sky{inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;opacity:.55;-webkit-mask-image:linear-gradient(#000 0,#000 30%,transparent 48%);mask-image:linear-gradient(#000 0,#000 30%,transparent 48%)}
-.bw{filter:grayscale(1) contrast(1.75) brightness(.88)}
-.win{position:absolute;left:40.5%;top:25%;width:20%;height:35%;overflow:hidden;clip-path:polygon(0 6%,100% 0,100% 100%,0 100%)}
-.win .sun{left:20%;width:60%;height:12.4%;top:42.6%}
-.win .hz{position:absolute;left:0;right:0;top:55%;height:2px;background:#F1E9DC;opacity:.85}</style>
+<style>
+@font-face { font-family: "APUS Display"; src: url(../fonts/apus-display.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+:root { --ink:#0B0B0C; --ember:#FF5A1F; --cream:#F1E9DC; --muted:#A8A29A; --dim:#7A756E; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: var(--ink); color: var(--cream); }
+body { font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; -webkit-font-smoothing: antialiased; overflow: hidden; }
+.disp { font-family: 'APUS Display', sans-serif; font-weight: 800; font-style: normal; letter-spacing: -0.03em; }
+
+/* the photograph: a fixed 2:3 frame that always covers the screen */
+.stage { position: fixed; left: 50%; top: 50%; width: max(100vw, 66.667vh); height: max(150vw, 100vh); transform: translate(-50%, -50%); overflow: hidden; }
+.zoom { position: absolute; inset: 0; transform-origin: 50.5% 42.5%; transition: transform 1.6s cubic-bezier(.7,0,.2,1); will-change: transform; }
+.zoom img { position: absolute; display: block; }
+.full { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.75) brightness(.88); }
+.ghost { inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.6);
+  -webkit-mask-image: linear-gradient(#000 0, #000 30%, transparent 48%); mask-image: linear-gradient(#000 0, #000 30%, transparent 48%); }
+.win { position: absolute; left: 40.5%; top: 25%; width: 20%; height: 35%; overflow: hidden; clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%); }
+.win .up { position: absolute; left: 0; right: 0; top: 0; height: 55%; overflow: hidden; }
+.win .sun { position: absolute; left: 20%; width: 60%; height: 22.5%; top: 77.5%; background: var(--ember); border-radius: 50% 50% 0 0 / 100% 100% 0 0; transition: transform 2.4s cubic-bezier(.5,0,.2,1); }
+.win .hz { position: absolute; left: 0; right: 0; top: 55%; height: 2px; background: var(--cream); opacity: .85; }
+.win .below { position: absolute; left: 0; right: 0; top: calc(55% + 2px); bottom: 0; background: linear-gradient(rgba(11,11,12,.35), rgba(11,11,12,.75)); overflow: hidden; }
+.win .rsun { position: absolute; left: 20%; width: 60%; top: 1%; height: 11%; background: var(--ember); border-radius: 0 0 50% 50% / 0 0 100% 100%; opacity: .16; filter: blur(2.4px); transform-origin: 50% 0; transition: transform 2.4s cubic-bezier(.5,0,.2,1); animation: rip 2.6s ease-in-out infinite; }
+@keyframes rip { 0%,100% { translate: 0 0; } 50% { translate: 3% 0; } }
+.fog { position: fixed; inset: 0; pointer-events: none; background: radial-gradient(120% 80% at 50% 40%, rgba(11,11,12,0) 50%, rgba(11,11,12,.8) 100%); transition: background 1.2s; }
+.grain { position: fixed; inset: 0; pointer-events: none; z-index: 20; background: url(../grain.webp) repeat; background-size: 256px; opacity: .17; mix-blend-mode: screen; animation: grain .9s steps(6) infinite; }
+@keyframes grain { 0%{background-position:0 0} 20%{background-position:-60px 40px} 40%{background-position:30px -70px} 60%{background-position:-90px -20px} 80%{background-position:50px 80px} 100%{background-position:0 0} }
+.wm { position: fixed; left: 50%; top: max(22px, env(safe-area-inset-top)); width: 96px; transform: translateX(-50%); z-index: 5; transition: opacity .8s; }
+
+/* the question: comes out of the fog letter by letter, with its reflection in the water */
+.ask { position: fixed; left: 0; right: 0; bottom: max(64px, calc(env(safe-area-inset-bottom) + 48px)); z-index: 4; text-align: center; padding: 0 22px; cursor: pointer; }
+.q { font-size: clamp(32px, 9vw, 48px); line-height: .92; margin: 0 auto; max-width: 420px; }
+.q .c { display: inline-block; opacity: 0; filter: blur(10px); transform: translateY(6px); animation: emerge 1.6s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: var(--d); }
+@keyframes emerge { to { opacity: 1; filter: blur(0); transform: none; } }
+.refl { margin: 6px auto 0; transform: scaleY(-1); opacity: .22; filter: blur(1.6px); -webkit-mask-image: linear-gradient(to top, #000, transparent 85%); mask-image: linear-gradient(to top, #000, transparent 85%); animation: ripple 3.2s ease-in-out infinite; pointer-events: none; }
+@keyframes ripple { 0%,100% { transform: scaleY(-1) skewX(0deg); } 50% { transform: scaleY(-1.04) skewX(3deg); } }
+.hint { margin: 14px 0 0; font-size: 14px; color: var(--muted); opacity: 0; animation: emerge 1.4s ease forwards 2.6s; filter: blur(4px); }
+.ask .c.sink { animation: sink 1.1s cubic-bezier(.6,0,.4,1) forwards; animation-delay: var(--s); }
+@keyframes sink { from { opacity: 1; filter: blur(0); transform: none; } to { opacity: 0; filter: blur(8px); transform: translateY(46px); } }
+body.writing .ask { pointer-events: none; }
+body.writing .hint, body.writing .refl { transition: opacity .6s; opacity: 0 !important; animation: none; }
+
+/* writing on the mirror */
+.glass { position: fixed; z-index: 6; opacity: 0; pointer-events: none; transition: opacity .9s ease .9s; transform: rotate(-1.6deg); }
+body.writing .glass { opacity: 1; pointer-events: auto; }
+.glass textarea, .glass .shown { position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: transparent; font: italic 19px/1.45 'Libre Baskerville', Georgia, serif; text-align: center; white-space: pre-wrap; overflow-wrap: break-word; }
+.glass textarea { color: transparent; caret-color: var(--ember); outline: none; resize: none; -webkit-appearance: none; appearance: none; }
+.glass textarea::placeholder { color: rgba(241,233,220,.42); }
+.glass .shown { pointer-events: none; color: var(--cream); text-shadow: 0 0 1px rgba(241,233,220,.4); }
+.shown .w { transition: opacity 2.4s ease, filter 2.4s ease; }
+.shown .w.new { animation: condense .7s ease; }
+@keyframes condense { from { opacity: 0; filter: blur(6px); } }
+.shown .w.old { opacity: .3; filter: blur(.8px); }
+.shown.fall .w { transition: transform 1.4s cubic-bezier(.6,0,.6,1), opacity 1.4s, filter 1.4s; transform: translateY(160px); opacity: 0; filter: blur(6px); }
+
+.foot { position: fixed; left: 0; right: 0; bottom: max(22px, env(safe-area-inset-bottom)); z-index: 7; text-align: center; padding: 0 24px; opacity: 0; pointer-events: none; transition: opacity .8s ease 1.4s; }
+body.writing .foot { opacity: 1; pointer-events: auto; }
+.act { background: none; border: 0; padding: 6px 0; cursor: pointer; color: var(--cream); font-size: 17px; text-transform: uppercase; letter-spacing: .04em; transition: opacity .4s; }
+.act:disabled { opacity: 0; pointer-events: none; }
+.act sup { font-size: 1em; margin-left: -2px; position: relative; top: -.32em; vertical-align: baseline; line-height: 0; color: var(--muted); }
+.note { margin: 8px auto 0; max-width: 290px; font-size: 11.5px; line-height: 1.55; color: var(--dim); }
+body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
+
+/* after: thank you surfaces as a reflection first, then turns upright */
+.after { position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: rgba(11,11,12,0); pointer-events: none; transition: background 1.6s ease; }
+.after.in { background: rgba(11,11,12,.92); pointer-events: auto; }
+.after h2 { margin: 0; font-size: clamp(56px, 16vw, 128px); line-height: .86; opacity: 0; transform: scaleY(-1); filter: blur(8px); }
+.after.in h2 { animation: surface 2.6s cubic-bezier(.6,0,.2,1) forwards .6s; }
+@keyframes surface { 0% { opacity: 0; transform: translateY(40%) scaleY(-1); filter: blur(8px); } 45% { opacity: .35; transform: translateY(40%) scaleY(-1); filter: blur(3px); } 100% { opacity: 1; transform: none; filter: blur(0); } }
+.after p { margin: 20px 0 0; font-size: 16px; line-height: 1.55; color: #D9D1C3; max-width: 290px; opacity: 0; }
+.after.in p { animation: emerge 1.6s ease forwards 3.1s; filter: blur(6px); }
+.hp { position: absolute; left: -9999px; }
+</style>
 </head>
 <body>
 <!-- Photos: Unsplash License (free to use). Mirror in the water: 8machine. Sculpture: Danil Zakhvatkin. -->
-<div class="stage" aria-hidden="true"><div class="zoom" id="zoom"><img class="full bw" src="https://images.unsplash.com/photo-1643686881664-1fea30b34787?w=1400&q=72&fm=jpg&sat=-100&auto=format" alt="">
-<img class="sky bw" src="https://images.unsplash.com/photo-1768170631448-a8b28ae4424b?w=1400&q=72&fm=jpg&sat=-100&auto=format" alt="">
-<div class="win" id="win"><div class="sun" id="sun"></div><div class="hz"></div></div></div></div>
-<div class="vig" aria-hidden="true"></div>
+<div class="stage" aria-hidden="true"><div class="zoom" id="zoom">
+  <img class="full" src="https://images.unsplash.com/photo-1643686881664-1fea30b34787?w=2000&q=74&fm=jpg&sat=-100" alt="">
+  <img class="ghost" src="https://images.unsplash.com/photo-1768170631448-a8b28ae4424b?w=1200&q=70&fm=jpg&sat=-100" alt="">
+  <div class="win" id="win"><div class="up"><div class="sun" id="sun"></div></div><div class="hz"></div><div class="below"><div class="rsun" id="rsun"></div></div></div>
+</div></div>
+<div class="fog" aria-hidden="true"></div>
 <img class="wm" src="../wordmark.webp" alt="APUS">
-<div class="ui">
-  <label class="q disp" for="line">What's in your head right now?</label>
-  <p class="sub disp">The text you'd send at 2am. Or the one you never send.</p>
-  <textarea id="line" maxlength="160" rows="1" placeholder="Write it here." autocomplete="off"></textarea>
+
+<div class="ask" id="ask" role="button" tabindex="0" aria-label="What's in your head right now? Write it on the mirror.">
+  <p class="q disp" id="q" aria-hidden="true">What's in your head right now?</p>
+  <p class="q disp refl" id="qr" aria-hidden="true">What's in your head right now?</p>
+  <p class="hint">Write it on the mirror.</p>
+</div>
+
+<div class="glass" id="glass">
+  <div class="shown" id="shown" aria-hidden="true"></div>
+  <textarea id="line" maxlength="160" placeholder="The text you'd send at 2am. Or the one you never send." autocomplete="off" aria-label="What's in your head right now?"></textarea>
+</div>
+<input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+<div class="foot">
   <button class="act disp" id="send" type="button" disabled>Send<sup>*</sup></button>
   <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
 </div>
-<section class="after" id="after" hidden><h2 class="disp">Thank you.</h2><p>You were here before the sun went down.</p></section>
+
+<section class="after" id="after" aria-live="polite"><h2 class="disp">Thank you.</h2><p>You were here before the sun went down.</p></section>
 <div class="grain" aria-hidden="true"></div>
-<script type="module">import { run } from './ui.js';
-const z = document.getElementById('zoom'), sun = document.getElementById('sun');
-run((p, t) => { const s = 1 + Math.min(p, 1) * 0.5 + Math.max(0, p - 1) * 3; z.style.transform = `scale(${s.toFixed(4)})`; sun.style.transform = `translateY(${(Math.min(p,1)*60).toFixed(1)}%)`; });</script>
+
+<script>
+const PREVIEW = true; // lab: nothing is saved
+const CFG = { url: "https://wyqpxtfsgqfpnlufkvcg.supabase.co", key: "sb_publishable_4ZXzZizUU6g-vHd_vrpcwg_VLGoqjss", table: "vibes", col: "feeling" };
+const $ = (id) => document.getElementById(id);
+const zoom = $('zoom'), win = $('win'), glass = $('glass'), line = $('line'), shown = $('shown'), send = $('send'), sun = $('sun'), rsun = $('rsun');
+
+/* letters out of the fog, in a slightly random order */
+function letters(el, sinkOrder) {
+  const t = el.textContent; el.textContent = '';
+  t.split(' ').forEach((word, wi, all) => {
+    const w = document.createElement('span'); w.style.whiteSpace = 'nowrap'; w.style.display = 'inline-block';
+    [...word].forEach((ch) => {
+      const s = document.createElement('span'); s.className = 'c'; s.textContent = ch;
+      s.style.setProperty('--d', (0.25 + Math.random() * 1.4).toFixed(2) + 's');
+      s.style.setProperty('--s', (Math.random() * .5).toFixed(2) + 's');
+      w.appendChild(s);
+    });
+    el.appendChild(w); if (wi < all.length - 1) el.appendChild(document.createTextNode(' '));
+  });
+}
+letters($('q')); letters($('qr'));
+
+/* fly into the mirror and put the writing on its face */
+let writing = false;
+function mirrorRect() { return win.getBoundingClientRect(); }
+function placeGlass() {
+  const r = mirrorRect();
+  const padX = r.width * 0.12, top = r.top + r.height * 0.08, h = r.height * 0.42;
+  Object.assign(glass.style, { left: (r.left + padX) + 'px', width: (r.width - padX * 2) + 'px', top: top + 'px', height: h + 'px' });
+}
+function enter() {
+  if (writing) return; writing = true;
+  document.querySelectorAll('#q .c, #qr .c').forEach((c) => c.classList.add('sink'));
+  const vw = innerWidth, vh = innerHeight;
+  const before = zoom.style.transform; zoom.style.transform = 'none';
+  const r = mirrorRect(); zoom.style.transform = before;
+  const s = Math.min((vw * 0.86) / r.width, (vh * 0.62) / r.height);
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const tx = vw / 2 - cx, ty = vh * 0.40 - cy;
+  zoom.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+  document.body.classList.add('writing');
+  setTimeout(() => { placeGlass(); line.focus({ preventScroll: true }); }, 1650);
+  setTimeout(placeGlass, 50);
+}
+$('ask').addEventListener('click', enter);
+$('ask').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enter(); } });
+document.querySelector('.stage').addEventListener('click', enter);
+addEventListener('resize', () => { if (writing) placeGlass(); });
+zoom.addEventListener('transitionend', () => { if (writing) placeGlass(); });
+
+/* words condense on the glass and fade back into the fog as you keep going */
+let stamps = [], prev = [];
+function render() {
+  const words = line.value.split(/(\s+)/);
+  const now = performance.now();
+  shown.textContent = '';
+  let wi = 0;
+  words.forEach((w) => {
+    if (/^\s+$/.test(w) || w === '') { shown.appendChild(document.createTextNode(w)); return; }
+    if (prev[wi] !== w) stamps[wi] = now;
+    const s = document.createElement('span'); s.className = 'w'; s.textContent = w;
+    if (now - stamps[wi] < 120) s.classList.add('new');
+    s.dataset.i = wi; shown.appendChild(s); wi++;
+  });
+  prev = words.filter((w) => w.trim()); stamps.length = prev.length;
+  const n = line.value.length;
+  sun.style.transform = `translateY(${(n / 160 * 100).toFixed(1)}%)`;
+  rsun.style.transform = `scaleY(${(1 - n / 160).toFixed(3)})`;
+  send.disabled = line.value.trim().length < 3;
+}
+function age() {
+  const now = performance.now(), total = prev.length;
+  shown.querySelectorAll('.w').forEach((s) => {
+    const i = +s.dataset.i;
+    s.classList.toggle('old', total - i > 4 && now - stamps[i] > 3500);
+  });
+}
+line.addEventListener('input', render); setInterval(age, 400); render();
+
+async function save(text) {
+  if (PREVIEW) { await new Promise((r) => setTimeout(r, 500)); return true; }
+  const r = await fetch(CFG.url + '/rest/v1/' + CFG.table, { method: 'POST', headers: { apikey: CFG.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ [CFG.col]: text, consent: true }) });
+  return r.ok;
+}
+send.addEventListener('click', async () => {
+  const t = line.value.trim().slice(0, 160); if (t.length < 3) return;
+  send.disabled = true;
+  if (!$('website').value && !(await save(t))) { send.disabled = false; return; }
+  line.blur(); document.body.classList.add('sent');
+  shown.querySelectorAll('.w').forEach((s, i) => { s.classList.remove('old'); s.style.transitionDelay = (i * 0.06) + 's'; });
+  shown.classList.add('fall');
+  sun.style.transform = 'translateY(110%)'; rsun.style.transform = 'scaleY(0)';
+  setTimeout(() => { glass.style.transition = 'opacity .6s'; glass.style.opacity = '0'; zoom.style.transform = 'none'; }, 1500);
+  setTimeout(() => $('after').classList.add('in'), 3000);
+});
+</script>
 </body>
 </html>
