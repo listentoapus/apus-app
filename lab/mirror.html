@@ -17,7 +17,7 @@ body { font-family: 'Libre Baskerville', Georgia, serif; font-style: italic; -we
 
 /* the photograph: a fixed 2:3 frame that always covers the screen */
 .stage { position: fixed; left: 50%; top: 50%; width: max(100vw, 66.667vh); height: max(150vw, 100vh); transform: translate(-50%, -50%); overflow: hidden; }
-.zoom { position: absolute; inset: 0; transform-origin: 50.5% 42.5%; transition: transform 1.6s cubic-bezier(.7,0,.2,1); will-change: transform; }
+.zoom { position: absolute; inset: 0; transform-origin: 50.5% 42.5%; transition: transform 2s cubic-bezier(.65,0,.35,1); will-change: transform; }
 .zoom img { position: absolute; display: block; }
 .full { inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.75) brightness(.88); }
 .ghost { inset: 0; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; opacity: .55; filter: grayscale(1) contrast(1.6);
@@ -50,8 +50,15 @@ body.writing .hint, body.writing .refl { transition: opacity .6s; opacity: 0 !im
 /* inside the sun: big half sun on the horizon, it sets as you write */
 html, body, .stage, .ask { cursor: pointer; }
 body.writing, body.writing .stage { cursor: auto; }
-.inside { position: fixed; inset: 0; z-index: 6; background: linear-gradient(to bottom, #0B0B0C 0%, #141416 30%, #232327 52%, #2E2E33 62%, #0B0B0C 62.2%, #0B0B0C 100%); opacity: 0; pointer-events: none; transition: opacity .9s ease 1.05s; }
+.inside { position: fixed; inset: 0; z-index: 6; opacity: 0; pointer-events: none; }
 body.writing .inside { opacity: 1; pointer-events: auto; }
+.sky { position: absolute; inset: 0; background: linear-gradient(to bottom, #0B0B0C 0%, #141416 30%, #232327 52%, #2E2E33 62%, #0B0B0C 62.2%, #0B0B0C 100%); opacity: 0; transition: opacity 1.3s ease .7s; }
+body.writing .sky { opacity: 1; }
+.fx { opacity: 0; transition: opacity 1s ease 1.2s; }
+body.writing .fx { opacity: 1; }
+.pane { opacity: 0; transition: opacity .9s ease 1.9s; }
+body.writing .pane { opacity: 1; }
+.flysun { position: fixed; z-index: 12; background: var(--ember); border-radius: 999px 999px 0 0; transform-origin: 50% 100%; transition: transform 1.25s cubic-bezier(.65,0,.35,1), opacity .35s ease; }
 .inside .hz { position: absolute; left: 0; right: 0; top: 62%; height: 2px; background: var(--cream); z-index: 1; transform-origin: 50% 50%; }
 .inside .hz.off { transition: transform .9s cubic-bezier(.7,0,.3,1), opacity .3s ease .85s; transform: scaleX(0); opacity: 0; }
 .dusk { position: absolute; inset: 0; background: #000; opacity: 0; z-index: 0; pointer-events: none; transition: opacity 1.2s ease; }
@@ -62,24 +69,21 @@ body.writing .inside { opacity: 1; pointer-events: auto; }
 .spark { position: absolute; left: 50%; top: 62%; width: 9px; height: 9px; margin: -4px 0 0 -4.5px; border-radius: 50%; background: var(--ember); z-index: 2; opacity: 0; box-shadow: 0 0 18px 4px rgba(255,90,31,.55); }
 .spark.on { animation: spark 1.1s ease forwards; }
 @keyframes spark { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1.3); } 60% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(.2); } }
-body.sent .pane { transition: opacity .8s ease 1s; opacity: 0; }
+body.sent .pane { transition: opacity .6s ease .5s; opacity: 0; }
 .inside .up { position: absolute; left: 0; right: 0; top: 0; height: 62%; overflow: hidden; z-index: 1; }
 .bigsun { position: absolute; left: 50%; bottom: 0; width: min(80vw, 440px); aspect-ratio: 2 / 1; margin-left: calc(min(80vw, 440px) / -2); background: var(--ember); border-radius: 999px 999px 0 0; transition: transform 1.2s cubic-bezier(.4,0,.2,1); }
 .inside .below { position: absolute; left: 0; right: 0; top: calc(62% + 2px); bottom: 0; overflow: hidden; z-index: 1; }
 .bigrefl { position: absolute; left: 50%; top: 4px; width: min(80vw, 440px); margin-left: calc(min(80vw, 440px) / -2); height: 34px; background: var(--ember); border-radius: 0 0 999px 999px; opacity: .14; filter: blur(5px); transform-origin: 50% 0; transition: transform 1.2s cubic-bezier(.4,0,.2,1); animation: rip 2.6s ease-in-out infinite; }
 .inside .grainy { position: absolute; inset: 0; background: radial-gradient(120% 70% at 50% 62%, rgba(11,11,12,0) 40%, rgba(11,11,12,.6) 100%); pointer-events: none; }
-.pane { position: absolute; left: 22px; right: 22px; top: max(84px, calc(env(safe-area-inset-top) + 64px)); text-align: center; z-index: 2; }
+.pane { position: absolute; left: 22px; right: 22px; top: max(84px, calc(env(safe-area-inset-top) + 64px)); text-align: center; z-index: 3; }
 .pane .sub { margin: 0 auto; max-width: 300px; font-size: 15px; line-height: 1.2; letter-spacing: -0.005em; color: var(--muted); }
 .field { position: relative; margin: 26px auto 0; max-width: 460px; min-height: 84px; }
 .field textarea, .field .shown { position: absolute; left: 0; right: 0; top: 0; min-height: 84px; margin: 0; padding: 0; border: 0; background: transparent; font: italic 21px/1.45 'Libre Baskerville', Georgia, serif; text-align: center; white-space: pre-wrap; overflow-wrap: break-word; }
 .field textarea { position: relative; display: block; width: 100%; color: transparent; caret-color: var(--ember); outline: none; resize: none; overflow: hidden; -webkit-appearance: none; appearance: none; font-size: max(16px, 21px); }
 .field textarea::placeholder { color: rgba(241,233,220,.42); }
 .field .shown { bottom: 0; pointer-events: none; color: var(--cream); z-index: 1; }
-.shown .w { transition: opacity 2.4s ease, filter 2.4s ease; }
-.shown .w.new { animation: condense .7s ease; }
-@keyframes condense { from { opacity: 0; filter: blur(6px); } }
-.shown .w.old { opacity: .3; filter: blur(.8px); }
-.shown.fall .w { transition: transform 1.1s cubic-bezier(.6,0,.6,1), opacity 1.1s, filter 1.1s; transform: translateY(220px); opacity: 0; filter: blur(6px); }
+.shown .w { display: inline-block; }
+.shown.fall .w { transition: transform 1s cubic-bezier(.55,0,.75,.4), opacity 1s, filter 1s; transform: translateY(240px); opacity: 0; filter: blur(5px); }
 .pane .act { display: block; margin: 14px auto 0; }
 
 .foot { position: fixed; left: 0; right: 0; bottom: max(22px, env(safe-area-inset-bottom)); z-index: 7; pointer-events: none !important; text-align: center; padding: 0 24px; opacity: 0; pointer-events: none; transition: opacity .8s ease 1.4s; }
@@ -92,14 +96,14 @@ body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
 
 /* after: thank you surfaces as a reflection first, then turns upright */
 .after { position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: rgba(11,11,12,0); pointer-events: none; transition: background .8s ease; }
-.after.in { background: rgba(11,11,12,.92); pointer-events: auto; }
-.after h2 { margin: 0; font-size: clamp(56px, 16vw, 128px); line-height: .86; opacity: 0; transform: scaleY(-1); filter: blur(8px); }
-.after.in h2 { animation: surface 1.7s cubic-bezier(.6,0,.2,1) forwards .2s; }
+.after.in { background: rgba(11,11,12,.96); pointer-events: auto; }
+.after h2 { margin: 0; font-size: clamp(56px, 16vw, 128px); line-height: .86; opacity: 0; transform: translateY(14px); filter: blur(6px); }
+.after.in h2 { transition: opacity 1.1s ease .15s, transform 1.3s cubic-bezier(.2,.7,.2,1) .15s, filter 1.1s ease .15s; opacity: 1; transform: none; filter: blur(0); }
 @keyframes surface { 0% { opacity: 0; transform: translateY(40%) scaleY(-1); filter: blur(8px); } 45% { opacity: .35; transform: translateY(40%) scaleY(-1); filter: blur(3px); } 100% { opacity: 1; transform: none; filter: blur(0); } }
 .after p { margin: 20px 0 0; font-size: 16px; line-height: 1.55; color: #D9D1C3; max-width: 290px; opacity: 0; }
-.after.in p { animation: emerge 1.2s ease forwards 1.6s; filter: blur(6px); }
+.after.in p { animation: emerge 1.1s ease forwards .7s; filter: blur(6px); }
 .after .mark { position: absolute; left: 50%; bottom: max(44px, calc(env(safe-area-inset-bottom) + 28px)); width: 76px; transform: translateX(-50%); opacity: 0; }
-.after.in .mark { animation: fadeup 1.2s ease forwards 2.2s; }
+.after.in .mark { opacity: 1; }
 @keyframes fadeup { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .hp { position: absolute; left: -9999px; }
 </style>
@@ -121,13 +125,13 @@ body.sent .foot, body.sent .wm { opacity: 0 !important; transition-delay: 0s; }
 </div>
 
 <div class="inside" id="inside">
+  <div class="sky"></div>
   <div class="up"><div class="bigsun" id="bigsun"></div></div>
   <div class="hz" id="bighz"></div>
-  <div class="glow" id="glow"></div>
+  <div class="fx"><div class="glow" id="glow"></div>
   <div class="below"><div class="bigrefl" id="bigrefl"></div></div>
-  <div class="grainy"></div>
+  <div class="grainy"></div></div>
   <div class="dusk" id="dusk"></div>
-  <div class="spark" id="spark"></div>
   <div class="pane">
     <p class="sub disp">The text you'd send at 2am. Or the one you never send.</p>
     <div class="field">
@@ -169,23 +173,40 @@ function letters(el, sinkOrder) {
 }
 letters($('q')); letters($('qr'));
 
-/* tap the mirror: fly into its sun */
+/* tap the mirror: a real zoom into its sun. The big sun starts exactly on top of the small one
+   and grows with the photograph, same curve, same time, so it never cuts. */
+const EASE = 'cubic-bezier(.65,0,.35,1)', DUR = 2000;
+const hz = $('bighz');
 let writing = false;
+function rectOf(el) { const r = el.getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height, cx: r.left + r.width / 2, b: r.bottom }; }
 function enter(e) {
   if (writing) return; writing = true;
   if (e) e.preventDefault();
   document.querySelectorAll('#q .c, #qr .c').forEach((c) => c.classList.add('sink'));
-  const vw = innerWidth, vh = innerHeight;
-  const r = sun.getBoundingClientRect();
-  const target = Math.min(vw * 0.8, 440);
-  const s = target / r.width;
-  const cx = r.left + r.width / 2, cy = r.bottom;      // the point where the sun meets the horizon
-  // scale around that point, then move it to where the big sun sits
+  const vw = innerWidth;
+  const r0 = rectOf(sun), h0 = rectOf(win.querySelector('.hz'));
+  bigsun.style.transition = 'none'; hz.style.transition = 'none';
+  bigsun.style.transform = 'none'; hz.style.transform = 'none';
+  const rF = rectOf(bigsun), hF = rectOf(hz);
+  // start the overlay sun and horizon exactly where the photo's are
+  bigsun.style.transformOrigin = '50% 100%';
+  bigsun.style.transform = `translate(${r0.cx - rF.cx}px, ${r0.b - rF.b}px) scale(${r0.w / rF.w})`;
+  hz.style.transform = `translate(${h0.cx - hF.cx}px, ${h0.t - hF.t}px) scaleX(${h0.w / hF.w})`;
+  // zoom the photograph around its sun, landing where the big sun sits
   const st = zoom.getBoundingClientRect();
-  zoom.style.transformOrigin = `${cx - st.left}px ${cy - st.top}px`;
-  zoom.style.transform = `translate(${vw / 2 - cx}px, ${vh * 0.62 - cy}px) scale(${s})`;
+  zoom.style.transformOrigin = `${r0.cx - st.left}px ${r0.b - st.top}px`;
   document.body.classList.add('writing');
-  setTimeout(() => line.focus({ preventScroll: true }), 1700);
+  void bigsun.offsetWidth;
+  requestAnimationFrame(() => {
+    const t = `transform ${DUR}ms ${EASE}`;
+    zoom.style.transition = t; bigsun.style.transition = t; hz.style.transition = t;
+    zoom.style.transform = `translate(${rF.cx - r0.cx}px, ${rF.b - r0.b}px) scale(${rF.w / r0.w})`;
+    bigsun.style.transform = 'none'; hz.style.transform = 'none';
+  });
+  setTimeout(() => {
+    bigsun.style.transition = 'transform 1.2s cubic-bezier(.4,0,.2,1)'; hz.style.transition = '';
+    line.focus({ preventScroll: true });
+  }, DUR + 50);
 }
 ['click', 'touchend'].forEach((ev) => {
   $('ask').addEventListener(ev, enter);
@@ -193,23 +214,15 @@ function enter(e) {
 });
 $('ask').addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') enter(e); });
 
-/* words condense on the glass and fade back into the fog as you keep going */
-let stamps = [], prev = [];
+/* writing: plain text, the sun sets as the line grows */
 function render() {
-  const words = line.value.split(/(\s+)/);
-  const now = performance.now();
   shown.textContent = '';
-  let wi = 0;
-  words.forEach((w) => {
-    if (/^\s+$/.test(w) || w === '') { shown.appendChild(document.createTextNode(w)); return; }
-    if (prev[wi] !== w) stamps[wi] = now;
-    const s = document.createElement('span'); s.className = 'w'; s.textContent = w;
-    if (now - stamps[wi] < 120) s.classList.add('new');
-    s.dataset.i = wi; shown.appendChild(s); wi++;
+  line.value.split(/(\s+)/).forEach((w) => {
+    if (!w) return;
+    if (/^\s+$/.test(w)) { shown.appendChild(document.createTextNode(w)); return; }
+    const s = document.createElement('span'); s.className = 'w'; s.textContent = w; shown.appendChild(s);
   });
-  prev = words.filter((w) => w.trim()); stamps.length = prev.length;
-  const n = line.value.length;
-  const k = n / 160;
+  const k = line.value.length / 160;
   sun.style.transform = `translateY(${(k * 100).toFixed(1)}%)`;
   rsun.style.transform = `scaleY(${(1 - k).toFixed(3)})`;
   bigsun.style.transform = `translateY(${(k * 100).toFixed(1)}%)`;
@@ -218,35 +231,49 @@ function render() {
   $('glow').style.opacity = (1 - k * 0.85).toFixed(3);
   send.disabled = line.value.trim().length < 3;
 }
-function age() {
-  const now = performance.now(), total = prev.length;
-  shown.querySelectorAll('.w').forEach((s) => {
-    const i = +s.dataset.i;
-    s.classList.toggle('old', total - i > 4 && now - stamps[i] > 3500);
-  });
-}
-line.addEventListener('input', () => { render(); line.style.height = 'auto'; line.style.height = Math.max(84, line.scrollHeight) + 'px'; }); setInterval(age, 400); render();
+line.addEventListener('input', () => { render(); line.style.height = 'auto'; line.style.height = Math.max(84, line.scrollHeight) + 'px'; });
+render();
 
 async function save(text) {
-  if (PREVIEW) { await new Promise((r) => setTimeout(r, 500)); return true; }
+  if (PREVIEW) { await new Promise((r) => setTimeout(r, 400)); return true; }
   const r = await fetch(CFG.url + '/rest/v1/' + CFG.table, { method: 'POST', headers: { apikey: CFG.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: JSON.stringify({ [CFG.col]: text, consent: true }) });
   return r.ok;
 }
+
+/* send: the words fall, the sun comes back up, shrinks into the logo, then thank you */
 send.addEventListener('click', async () => {
   const t = line.value.trim().slice(0, 160); if (t.length < 3) return;
   send.disabled = true;
   if (!$('website').value && !(await save(t))) { send.disabled = false; return; }
   line.blur(); document.body.classList.add('sent');
-  shown.querySelectorAll('.w').forEach((s, i) => { s.classList.remove('old'); s.style.transitionDelay = (i * 0.06) + 's'; });
+  shown.querySelectorAll('.w').forEach((w, i, all) => { w.style.transitionDelay = ((all.length - i) * 0.035) + 's'; });
   shown.classList.add('fall');
-  // the sunset: sun drops, the last light flares, the horizon closes to a point, a spark, then dark
-  bigsun.style.transition = 'transform 1.3s cubic-bezier(.5,0,.3,1)';
-  bigsun.style.transform = 'translateY(101%)'; bigrefl.style.transform = 'scaleY(0)';
-  const glow = $('glow');
-  setTimeout(() => glow.classList.add('flare'), 1050);
-  setTimeout(() => { glow.classList.remove('flare'); glow.classList.add('gone'); $('bighz').classList.add('off'); $('dusk').style.zIndex = '1'; $('dusk').style.opacity = '1'; }, 1500);
-  setTimeout(() => $('spark').classList.add('on'), 2150);
-  setTimeout(() => $('after').classList.add('in'), 3100);
+  // the sun rises back to half
+  setTimeout(() => {
+    bigsun.style.transition = 'transform .9s cubic-bezier(.3,0,.2,1)'; bigsun.style.transform = 'none';
+    bigrefl.style.transform = 'scaleY(1)'; $('glow').style.opacity = '0'; $('dusk').style.opacity = '.55';
+  }, 350);
+  // then it leaves the horizon and shrinks into the logo
+  setTimeout(() => {
+    const R = rectOf(bigsun), H = rectOf(hz), m = rectOf(document.querySelector('.after .mark'));
+    const T = { w: m.w * 56 / 80, cx: m.l + m.w * 50 / 80, b: m.t + m.h * 30 / 44 };
+    const L = { w: m.w * 76 / 80, cx: m.l + m.w * 50 / 80, t: m.t + m.h * 29.5 / 44, h: m.h * 1.5 / 44 };
+    const fly = document.createElement('div'); fly.className = 'flysun';
+    Object.assign(fly.style, { left: R.l + 'px', top: R.t + 'px', width: R.w + 'px', height: R.h + 'px' });
+    document.body.appendChild(fly); bigsun.style.visibility = 'hidden';
+    hz.style.zIndex = 12; hz.style.position = 'fixed';
+    hz.style.transition = 'transform 1.25s ' + EASE;
+    $('dusk').style.zIndex = '2'; $('dusk').style.opacity = '1'; document.querySelector('.fx').style.transition = 'opacity .6s'; document.querySelector('.fx').style.opacity = '0';
+    requestAnimationFrame(() => {
+      fly.style.transform = `translate(${T.cx - R.cx}px, ${T.b - R.b}px) scale(${T.w / R.w})`;
+      hz.style.transformOrigin = '50% 50%';
+      hz.style.transform = `translate(${L.cx - H.cx}px, ${L.t - H.t}px) scale(${L.w / H.w}, ${Math.max(.4, L.h / H.h)})`;
+    });
+    setTimeout(() => {
+      $('after').classList.add('in');
+      setTimeout(() => { fly.style.opacity = '0'; hz.style.transition = 'opacity .35s'; hz.style.opacity = '0'; }, 120);
+    }, 1300);
+  }, 1300);
 });
 </script>
 </body>
