@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%230B0B0C'/%3E%3Cpath d='M22 58 A28 28 0 0 1 78 58 Z' fill='%23FF5A1F'/%3E%3Cellipse cx='56' cy='66' rx='34' ry='5' fill='%23FFB15C' opacity='0.55'/%3E%3Crect x='12' y='57.5' width='76' height='1.5' fill='%23F1E9DC'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..110,800&family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100..120,800..900&family=Hedvig+Letters+Serif:opsz@12..24&display=swap">
 <style>
 :root {
   --ink: #0B0B0C;
@@ -90,51 +90,41 @@ h1 {
   padding: 8px 6px 0;
   text-align: left;
 }
-.num {
-  display: block; margin: 0 0 14px;
-  font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 110%;
-  font-size: 10.5px; letter-spacing: .42em; text-transform: uppercase; color: #6E6A64;
-}
 .q {
-  font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 100%;
-  font-size: clamp(28px, 7.6vw, 34px); letter-spacing: -0.03em; line-height: 1; margin: 0; display: block;
+  font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 108%;
+  font-size: clamp(30px, 8.4vw, 46px); letter-spacing: -0.03em; line-height: .92; margin: 0; display: block;
+  text-wrap: balance;
 }
-.hint { margin: 12px 0 0; font-size: 15px; line-height: 1.4; color: var(--muted); }
-textarea, input[type="text"] {
-  display: block; width: 100%;
-  background: transparent; color: var(--cream);
-  border: 0; border-radius: 0;
-  font-family: 'Hedvig Letters Serif', Georgia, serif;
-  outline: none; -webkit-appearance: none; appearance: none;
-}
+.hint { margin: 14px 0 0; font-size: 16px; line-height: 1.45; color: var(--muted); }
+.field { position: relative; margin-top: 34px; }
 textarea {
-  margin-top: 22px; font-size: 22px; line-height: 1.35; resize: none;
-  min-height: 2.7em; padding: 0 0 6px;
+  display: block; width: 100%; background: transparent; color: var(--cream);
+  border: 0; border-radius: 0; outline: none; -webkit-appearance: none; appearance: none;
+  font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 24px; line-height: 1.3;
+  resize: none; min-height: 2.6em; padding: 0 0 10px; caret-color: var(--cream);
 }
-textarea::placeholder, input::placeholder { color: #5E5A55; }
-input[type="text"] { border-bottom: 1px solid var(--line); }
-input[type="text"]:focus { border-bottom-color: var(--cream); }
-.meter { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
-.bar { flex: 1; height: 1px; background: var(--line); position: relative; }
-.bar i { position: absolute; left: 0; top: 0; height: 1px; width: 0; background: var(--cream); transition: width .15s; }
-.count { font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 110%; font-size: 10.5px; letter-spacing: .3em; color: #6E6A64; font-variant-numeric: tabular-nums; min-width: 86px; text-align: right; }
+textarea::placeholder { color: #57534E; }
+.caret { position: absolute; left: -1px; top: 4px; width: 2px; height: 24px; background: var(--cream); animation: blink 1.05s steps(1) infinite; }
+.field:focus-within .caret, .field.filled .caret { display: none; }
+@keyframes blink { 50% { opacity: 0; } }
+.meter { position: relative; }
+.bar { height: 1px; background: #3A3733; position: relative; transition: background .3s; }
+.field:focus-within + .meter .bar { background: #6B665F; }
+.bar i { position: absolute; left: 0; top: -0.5px; height: 2px; width: 0; background: var(--cream); transition: width .15s; }
+.count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1em; }
 .count.full { color: var(--cream); }
-.handle { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .45s ease, opacity .45s ease, margin .45s ease; margin-top: 0; }
-.handle > div { overflow: hidden; }
-.handle.on { grid-template-rows: 1fr; opacity: 1; margin-top: 34px; }
-.handle label { display: block; font-size: 15px; color: var(--muted); line-height: 1.4; }
-.handle input { margin-top: 6px; font-size: 18px; padding: 0 0 8px; }
-.row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-top: 30px; }
-.fine { font-size: 13px; line-height: 1.4; color: var(--muted); max-width: 240px; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; }
 .act {
-  background: none; border: 0; padding: 6px 0; margin: 0; cursor: pointer;
-  font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 110%;
-  font-size: 15px; letter-spacing: .4em; text-transform: uppercase;
-  color: var(--cream);
+  background: none; border: 0; padding: 8px 0; margin: 0; cursor: pointer;
+  font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 120%;
+  font-size: 18px; letter-spacing: .02em; text-transform: uppercase; color: var(--cream);
+  transition: color .3s;
 }
 .act:disabled { color: #3F3C39; cursor: default; }
 .act:not(:disabled):hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 .act:focus-visible { outline: 1px solid var(--cream); outline-offset: 4px; }
+.act sup { font-size: .55em; margin-left: 2px; vertical-align: super; line-height: 0; }
+.note { margin: 26px 0 0; font-size: 13px; line-height: 1.45; color: #7D776F; }
 .err { margin: 14px 0 0; font-size: 15px; color: var(--cream); min-height: 0; }
 .ok { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; font-size: 14px; line-height: 1.4; color: var(--muted); cursor: pointer; }
 .ok input { -webkit-appearance: none; appearance: none; flex: none; width: 18px; height: 18px; margin: 1px 0 0; border: 1px solid var(--muted); border-radius: 0; background: transparent; display: grid; place-items: center; cursor: pointer; }
@@ -174,15 +164,13 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
   .card { opacity: 1; transform: none; transition: none; }
 }
 
-.act sup { font-size: .55em; margin-left: 2px; vertical-align: super; line-height: 0; }
-.note { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; line-height: 1.5; color: var(--muted); }
 .thanks, .mark { position: relative; }
-.thanks span { display: block; margin-bottom: 12px; font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 110%; font-size: 12px; letter-spacing: .45em; text-transform: uppercase; color: var(--muted); }
 .thanks {
-  margin: 72px 0 0; text-align: center; max-width: 520px;
-  font-family: 'Hedvig Letters Serif', Georgia, serif; font-size: 20px; line-height: 1.4; color: var(--cream);
+  margin: 96px 0 0; text-align: center; max-width: 520px;
   opacity: 0; transform: translateY(24px); transition: opacity 1.2s ease, transform 1.3s cubic-bezier(.16,.84,.24,1);
 }
+.thanks h3 { margin: 0; font-family: 'Anybody', sans-serif; font-weight: 800; font-stretch: 100%; font-size: clamp(40px, 11vw, 64px); letter-spacing: -0.03em; line-height: .9; color: var(--cream); }
+.thanks p { margin: 14px 0 0; font-size: 16px; line-height: 1.45; color: var(--muted); }
 .mark { width: 84px; height: auto; display: block; margin: 44px 0 8px; opacity: 0; transform: translateY(16px); transition: opacity 1.2s ease .2s, transform 1.3s cubic-bezier(.16,.84,.24,1) .2s; }
 .thanks.in, .mark.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .thanks, .mark { opacity: 1; transform: none; transition: none; } }
@@ -220,32 +208,29 @@ h1 .w > span { display: inline-block; animation: up 1.15s cubic-bezier(.16,.84,.
 
     <div class="card">
       <form class="form" id="f" novalidate>
-        <span class="num" aria-hidden="true">01</span>
         <label class="q" for="line">What's in your head right now?</label>
-        <p class="hint">Say it like you'd text the one person who gets it. Where you are, what you can't let go of.</p>
-        <textarea id="line" name="line" maxlength="160" rows="2" placeholder="On the night bus, still replaying what she said at dinner." autocomplete="off" required></textarea>
-        <div class="meter" aria-hidden="true"><div class="bar"><i id="bar"></i></div><span class="count" id="count">000/160</span></div>
-        <div class="handle" id="handleWrap"><div>
-          <span class="num" aria-hidden="true">02</span>
-          <label for="handle">Leave your @ if you want to hear back.</label>
-          <input type="text" id="handle" name="handle" maxlength="60" placeholder="@" autocomplete="off" autocapitalize="off" spellcheck="false">
-        </div></div>
+        <p class="hint">Say it like you'd text the one person who gets it.</p>
+        <div class="field">
+          <textarea id="line" name="line" maxlength="160" rows="2" placeholder="On the night bus, still replaying what she said." autocomplete="off" required></textarea>
+          <i class="caret" aria-hidden="true"></i>
+        </div>
+        <div class="meter" aria-hidden="true"><div class="bar"><i id="bar"></i></div></div>
         <input class="hp" type="text" id="website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="row">
-          <div class="fine"></div>
+          <span class="count" id="count"></span>
           <button class="act" type="submit" id="send" disabled>Send<sup>*</sup></button>
         </div>
-        <p class="note">* Answers are anonymous. They're stored in the EU and never sold or shared. Sending means you're ok with yours being kept.</p>
         <p class="err" id="err" role="alert"></p>
+        <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
       </form>
       <div class="done" aria-live="polite">
         <h2 id="doneTitle">Heard.</h2>
         <p id="doneText">Come back tomorrow. It will sound different.</p>
         <blockquote id="echo"></blockquote>
-        <div class="row"><button class="act" type="button" id="again">Write another</button></div>
+        <div class="row"><span></span><button class="act" type="button" id="again">Write another</button></div>
       </div>
     </div>
-    <p class="thanks"><span>You're early</span>Thank you for being part of it.</p>
+    <div class="thanks"><h3>You're early.</h3><p>Thank you for being part of it.</p></div>
     <svg class="mark" role="img" aria-label="APUS" viewBox="10 28 80 44"><path d="M22 58 A28 28 0 0 1 78 58 Z" fill="#FF5A1F"/><ellipse cx="56" cy="66" rx="34" ry="5" fill="#FFB15C" opacity="0.55"/><rect x="12" y="57.5" width="76" height="1.5" fill="#F1E9DC"/></svg>
   </section>
 </main>
@@ -258,22 +243,22 @@ const APUS_CONFIG = {
   supabaseKey: "sb_publishable_4ZXzZizUU6g-vHd_vrpcwg_VLGoqjss", // publishable key, safe to be public (insert-only)
   table: "vibes",
   textColumn: "feeling",
-  handleColumn: "contact",
+  handleColumn: null,
   extra: { consent: true } // sending = consent, explained in the * note under SEND
 };
 const DAILY_LIMIT = 5;
 /* ================================================================ */
 
 const $ = (id) => document.getElementById(id);
-const line = $('line'), handle = $('handle'), send = $('send'), err = $('err');
+const line = $('line'), send = $('send'), err = $('err');
 
 function update() {
   const n = line.value.length;
-  $('count').textContent = String(n).padStart(3, '0') + '/160';
+  $('count').textContent = n ? n + '/160' : '';
+  line.parentNode.classList.toggle('filled', n > 0);
   $('count').classList.toggle('full', n >= 160);
   $('bar').style.width = (n / 160 * 100) + '%';
   send.disabled = line.value.trim().length < 3;
-  if (line.value.trim().length >= 3) $('handleWrap').classList.add('on');
   line.style.height = 'auto';
   line.style.height = line.scrollHeight + 'px';
 }
@@ -319,8 +304,7 @@ $('f').addEventListener('submit', async (e) => {
   if (text.length < 3) return;
   if ($('website').value) { finish(text, ''); return; }
   if (sentToday() >= DAILY_LIMIT) { err.textContent = "That's enough for today. Come back tomorrow."; return; }
-  let at = handle.value.trim().replace(/\s+/g, '');
-  if (at && !at.startsWith('@')) at = '@' + at;
+  const at = '';
   send.disabled = true; send.textContent = 'Sending';
   let ok = false;
   try { ok = await save(text, at); } catch (x) { console.error(x); }
@@ -332,9 +316,7 @@ $('f').addEventListener('submit', async (e) => {
 
 function finish(text, at) {
   $('echo').textContent = text;
-  $('doneText').textContent = at
-    ? "If your line gets picked, you'll hear back. Check your DMs."
-    : "Come back tomorrow. It will sound different.";
+  $('doneText').textContent = "Come back tomorrow. It will sound different.";
   document.body.classList.add('sent');
 }
 
