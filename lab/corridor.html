@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>APUS</title>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@1&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>:root{--ox:50%;--oy:47%}
+.bw{filter:grayscale(1) contrast(1.85) brightness(.88)}
+.half{top:0;height:100%;width:50%;object-fit:cover}
+.l{left:0;object-position:0% 50%}
+.r{left:50%;object-position:0% 50%;transform:scaleX(-1)}
+.ghost{inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:.28}
+#sun{left:47%;width:6%;height:2%;top:46%}
+.top{position:absolute;inset:0;background:linear-gradient(#0B0B0C 0,rgba(11,11,12,.85) 14%,rgba(11,11,12,0) 34%)}</style>
+</head>
+<body>
+<!-- Photos: Unsplash License (free to use). Corridor: Emilio Rosas. Arches: Steffen Lemmerzahl. -->
+<div class="stage" aria-hidden="true"><div class="zoom" id="zoom"><img class="half l bw" src="https://images.unsplash.com/photo-1790343434194-206f556b1a0c?w=1400&q=72&fm=jpg&sat=-100&auto=format" alt="">
+<img class="half r bw" src="https://images.unsplash.com/photo-1790343434194-206f556b1a0c?w=1400&q=72&fm=jpg&sat=-100&auto=format" alt="">
+<img class="ghost bw" src="https://images.unsplash.com/photo-1773000857337-bee1c2f87c31?w=1400&q=72&fm=jpg&sat=-100&auto=format" alt="">
+<div class="sun" id="sun"></div>
+<div class="top"></div></div></div>
+<div class="vig" aria-hidden="true"></div>
+<img class="wm" src="../wordmark.webp" alt="APUS">
+<div class="ui">
+  <label class="q disp" for="line">What's in your head right now?</label>
+  <p class="sub disp">The text you'd send at 2am. Or the one you never send.</p>
+  <textarea id="line" maxlength="160" rows="1" placeholder="Write it here." autocomplete="off"></textarea>
+  <button class="act disp" id="send" type="button" disabled>Send<sup>*</sup></button>
+  <p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p>
+</div>
+<section class="after" id="after" hidden><h2 class="disp">Thank you.</h2><p>You were here before the sun went down.</p></section>
+<div class="grain" aria-hidden="true"></div>
+<script type="module">import { run } from './ui.js';
+const z = document.getElementById('zoom');
+run((p, t) => { const s = 1 + Math.min(p, 1) * 0.8 + Math.max(0, p - 1) * 4; z.style.transform = `scale(${s.toFixed(4)})`; });</script>
+</body>
+</html>
