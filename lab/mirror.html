@@ -3,8 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-<meta name="robots" content="noindex">
 <title>APUS</title>
+<meta name="description" content="You're early. One line is enough. Nobody will know it was you.">
+<meta name="theme-color" content="#0B0B0C">
+<meta property="og:title" content="APUS">
+<meta property="og:description" content="You're early. One line is enough. Nobody will know it was you.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='23' fill='%230B0B0C'/%3E%3Cpath d='M22 58 A28 28 0 0 1 78 58 Z' fill='%23FF5A1F'/%3E%3Cellipse cx='56' cy='66' rx='34' ry='5' fill='%23FFB15C' opacity='0.55'/%3E%3Crect x='12' y='57.5' width='76' height='1.5' fill='%23F1E9DC'/%3E%3C/svg%3E">
+<link rel="preload" href="../fonts/apus-display.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@1&display=swap">
 <style>
@@ -99,6 +104,7 @@ body.sent .foot { opacity: 0; }
 .after .mark { position: absolute; left: 50%; bottom: max(44px, calc(env(safe-area-inset-bottom) + 28px)); width: 76px; transform: translateX(-50%); opacity: 0; transition: opacity .3s ease; }
 .after.in .mark { opacity: 1; }
 .hp { position: absolute; left: -9999px; }
+.err { margin: 10px auto 0; min-height: 1.4em; font-size: 14px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -131,6 +137,7 @@ body.sent .foot { opacity: 0; }
     <textarea id="line" maxlength="160" placeholder="Write it here." autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="sentences" aria-label="What's in your head right now?"></textarea>
   </div>
   <button class="act disp" id="send" type="button" disabled>Send<sup>*</sup></button>
+  <p class="err" id="err" role="alert"></p>
 </div>
 <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 <div class="foot"><p class="note">* Anonymous, stored in the EU, never sold or shared. Sending means you're ok with that.</p></div>
@@ -141,7 +148,8 @@ body.sent .foot { opacity: 0; }
 <div class="grain" aria-hidden="true"></div>
 
 <script>
-const PREVIEW = true; // lab: nothing is saved
+const PREVIEW = false; // live: lines go to Supabase
+const DAILY_LIMIT = 5;
 const CFG = { url: "https://wyqpxtfsgqfpnlufkvcg.supabase.co", key: "sb_publishable_4ZXzZizUU6g-vHd_vrpcwg_VLGoqjss", table: "vibes", col: "feeling" };
 const $ = (id) => document.getElementById(id);
 const zoom = $('zoom'), win = $('win'), sun = $('sun'), hz = $('hz'), line = $('line'), shown = $('shown'), send = $('send');
@@ -215,8 +223,16 @@ async function save(text) {
 let zoomScale = 1;
 send.addEventListener('click', async () => {
   const t = line.value.trim().slice(0, 160); if (t.length < 3) return;
+  const err = $('err'); err.textContent = '';
+  const key = 'apus-sent-' + new Date().toISOString().slice(0, 10);
+  let count = 0; try { count = parseInt(localStorage.getItem(key) || '0', 10); } catch (e) {}
+  if (count >= DAILY_LIMIT) { err.textContent = "That's enough for today. Come back tomorrow."; return; }
   send.disabled = true;
-  if (!$('website').value && !(await save(t))) { send.disabled = false; return; }
+  if (!$('website').value) {
+    let ok = false; try { ok = await save(t); } catch (e) { console.error(e); }
+    if (!ok) { err.textContent = "That didn't go through. Try again."; send.disabled = false; return; }
+    try { localStorage.setItem(key, String(count + 1)); } catch (e) {}
+  }
   line.blur(); render(); document.body.classList.add('sent');
   document.querySelector('.field').classList.add('falling');
   shown.querySelectorAll('.w').forEach((w, i, all) => { w.style.transitionDelay = ((all.length - i) * 0.035) + 's'; });
